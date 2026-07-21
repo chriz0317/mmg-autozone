@@ -1,0 +1,61 @@
+databases:
+  - name: mmg-autozone-db
+    plan: free # Change to starter ($7/mo) for production
+    databaseName: mmg_autozone
+    user: autozone_user
+
+services:
+  - type: web
+    name: mmg-autozone-app
+    env: php
+    plan: free # Change to starter ($7/mo) for production
+    buildCommand: "bash .render-build.sh"
+    envVars:
+      - key: APP_NAME
+        value: "MMG Autozone"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        value: https://mmg-autozone-app.onrender.com # This will be the temporary render URL
+      
+      # Database Connection
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: mmg-autozone-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: mmg-autozone-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: mmg-autozone-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: mmg-autozone-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: mmg-autozone-db
+          property: password
+
+      # Other configs
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: BROADCAST_DRIVER
+        value: log
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+      - key: MAIL_MAILER
+        value: log
