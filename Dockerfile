@@ -51,6 +51,7 @@ RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT:-10000}>/g' /etc/apache2
 
 # Start script
 COPY .render-start.sh /usr/local/bin/start
+RUN sed -i 's/\r$//' /usr/local/bin/start
 RUN chmod +x /usr/local/bin/start
 
 CMD ["/usr/local/bin/start"]
