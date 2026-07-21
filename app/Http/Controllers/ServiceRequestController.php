@@ -51,7 +51,7 @@ class ServiceRequestController extends Controller
             'email' => $request->email,
             'vehicle_model' => $request->vehicle_model,
             'plate_no' => $request->plate_no,
-            'issue_description' => $request->issue_description,
+            'issue_description' => $request->issue_description ?? 'Auto Repaint / Customization',
             'photos' => empty($photoPaths) ? null : $photoPaths,
             'areas' => $request->areas,
             'color_preference' => $request->color_preference,
