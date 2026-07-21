@@ -7,10 +7,8 @@ databases:
 services:
   - type: web
     name: mmg-autozone-app
-    env: php
+    env: docker
     plan: free # Change to starter ($7/mo) for production
-    buildCommand: "bash .render-build.sh"
-    startCommand: "heroku-php-apache2 public/"
     envVars:
       - key: APP_NAME
         value: "MMG Autozone"
