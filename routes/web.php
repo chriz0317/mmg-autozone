@@ -59,8 +59,13 @@ Route::get('/receipt/{reference_number}/pdf', function ($reference_number) {
 // TEMPORARY ADMIN ROUTE FOR MIGRATION
 // ==========================================
 Route::get('/run-migration', function () {
-    \Illuminate\Support\Facades\Artisan::call('migrate');
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
     return 'Migration run successfully!';
+});
+
+Route::get('/run-seeder', function () {
+    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+    return 'Database seeded successfully! You can now log in.';
 });
 
 Route::get('/recover-file', function () {
