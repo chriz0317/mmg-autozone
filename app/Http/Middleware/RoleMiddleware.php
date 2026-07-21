@@ -25,7 +25,7 @@ class RoleMiddleware
             return match ($guard) {
                 'staff' => redirect('/staff/login'),
                 'admin' => redirect('/admin/login'),
-                default => redirect('/'),
+                default => redirect('/customer/login'),
             };
         }
 
@@ -37,7 +37,7 @@ class RoleMiddleware
             return match ($guard) {
                 'staff' => redirect('/staff/login')->withErrors(['email' => 'Access denied.']),
                 'admin' => redirect('/admin/login')->withErrors(['email' => 'Access denied.']),
-                default => redirect('/')->withErrors(['email' => 'Access denied.']),
+                default => redirect('/customer/login')->withErrors(['email' => 'Access denied.']),
             };
         }
 
