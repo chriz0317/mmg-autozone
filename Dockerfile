@@ -45,10 +45,6 @@ RUN npm install && npm run build
 # Adjust permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Change port to 10000 (Render default) or what Render assigns via PORT env
-RUN sed -i 's/Listen 80/Listen ${PORT:-10000}/g' /etc/apache2/ports.conf
-RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT:-10000}>/g' /etc/apache2/sites-available/000-default.conf
-
 # Start script
 COPY .render-start.sh /usr/local/bin/start
 RUN sed -i 's/\r$//' /usr/local/bin/start
