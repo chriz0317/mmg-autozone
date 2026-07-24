@@ -103,7 +103,7 @@ class ServiceRequestController extends Controller
         $serviceRequest = ServiceRequest::findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:Pending,Reviewed,Approved,Rejected',
+            'status' => 'required|in:Pending,Reviewed,Approved,unavailable',
             'estimated_cost' => 'nullable|numeric|min:0',
             'admin_remarks' => 'nullable|string',
         ]);

@@ -84,11 +84,11 @@ export default function ServicesList({ auth, serviceRequests }) {
                                             <td className="p-4">
                                                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border
                                                     ${req.status === 'Approved' ? 'bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.3)]' :
-                                                        req.status === 'Rejected' ? 'bg-[rgba(239,68,68,0.1)] text-[#ef4444] border-[rgba(239,68,68,0.3)]' :
+                                                        req.status === 'unavailable' ? 'bg-[rgba(107,114,128,0.1)] text-[#9ca3af] border-[rgba(107,114,128,0.3)]' :
                                                         req.status === 'Reviewed' ? 'bg-[rgba(59,130,246,0.1)] text-[#3b82f6] border-[rgba(59,130,246,0.3)]' :
                                                         'bg-[rgba(249,115,22,0.1)] text-[#f97316] border-[rgba(249,115,22,0.3)]'}`}
                                                 >
-                                                    {req.status}
+                                                    {req.status === 'unavailable' ? 'Service Unavailable' : req.status}
                                                 </span>
                                             </td>
                                             <td className="p-4 text-right">
@@ -206,7 +206,7 @@ export default function ServicesList({ auth, serviceRequests }) {
                                             <option value="Pending">Pending</option>
                                             <option value="Reviewed">Reviewed (Need more info)</option>
                                             <option value="Approved">Approved (Ready for drop-off)</option>
-                                            <option value="Rejected">Rejected</option>
+                                            <option value="unavailable">Service Unavailable</option>
                                         </select>
                                     </div>
 

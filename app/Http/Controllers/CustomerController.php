@@ -21,6 +21,7 @@ class CustomerController extends Controller
     {
         $user = Auth::guard('web')->user();
         $estimates = \App\Models\ServiceRequest::where('user_id', $user->id)
+            ->with('intake')
             ->orderBy('created_at', 'desc')
             ->get();
 

@@ -44,4 +44,9 @@ class ServiceRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function intake()
+    {
+        return $this->hasOne(Intake::class, 'estimate_id');
+    }
 }

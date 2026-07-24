@@ -117,4 +117,29 @@ class AdminController extends Controller
             'topItems' => $topItems,
         ]);
     }
+
+    public function uploadProgressPhotos(Request $request, Intake $intake)
+    {
+        $request->validate([
+            'photos'   => 'required|array',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
+        ]);
+
+        $existing = $intake->progress_photos ?? [];
+
+        foreach ($request->file('photos') as $photo) {
+            $path = $photo->store('progress_photos', 'public');
+            $existing[] = '/storage/' . $path;
+        }
+
+        $intake->update(['progress_photos' => $existing]);
+
+        \App\Models\ActivityLog::create([
+            'user_id'     => Auth::id() ?? Auth::guard('admin')->id(),
+            'action'      => 'Progress Photos Uploaded',
+            'description' => "Uploaded " . count($request->file('photos')) . " progress photo(s) for Intake {$intake->reference_number}",
+        ]);
+
+        return redirect()->back()->with('success', 'Progress photos uploaded successfully.');
+    }
 }

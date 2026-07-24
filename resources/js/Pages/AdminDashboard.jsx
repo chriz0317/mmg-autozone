@@ -266,21 +266,52 @@ export default function AdminDashboard({ auth, intakes = [], transactions = [], 
                                         ))}
                                     </select>
                                 </div>
-                                <div className="pt-4 flex justify-between">
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (confirm('Mark this vehicle as Ready for Pickup and notify the customer?')) {
-                                                router.post(`/admin/intakes/${selectedIntake.id}/ready`, {}, {
-                                                    onSuccess: () => setSelectedIntake(null)
-                                                });
-                                            }
-                                        }}
-                                        className="px-6 py-2 rounded-lg text-sm font-black text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20"
-                                    >
-                                        Mark Ready for Pickup
-                                    </button>
+                                <div className="pt-4 flex flex-wrap justify-between gap-3">
+                                    <div className="flex gap-2 flex-wrap">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (confirm('Mark this vehicle as Ready for Pickup and notify the customer?')) {
+                                                    router.post(`/admin/intakes/${selectedIntake.id}/ready`, {}, {
+                                                        onSuccess: () => setSelectedIntake(null)
+                                                    });
+                                                }
+                                            }}
+                                            className="px-6 py-2 rounded-lg text-sm font-black text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20"
+                                        >
+                                            Mark Ready for Pickup
+                                        </button>
+                                        <label className="cursor-pointer px-4 py-2 rounded-lg text-sm font-black text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
+                                            📸 Upload Progress Photos
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept="image/*"
+                                                className="sr-only"
+                                                onChange={(e) => {
+                                                    const files = Array.from(e.target.files);
+                                                    if (!files.length) return;
+                                                    const fd = new FormData();
+                                                    files.forEach(f => fd.append('photos[]', f));
+                                                    fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
+                                                    fetch(`/admin/intakes/${selectedIntake.id}/progress-photos`, {
+                                                        method: 'POST',
+                                                        body: fd,
+                                                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
+                                                    }).then(r => {
+                                                        if (r.ok || r.redirected) {
+                                                            alert(`${files.length} photo(s) uploaded successfully!`);
+                                                            router.reload({ only: ['intakes'] });
+                                                        } else {
+                                                            alert('Upload failed. Please try again.');
+                                                        }
+                                                    });
+                                                    e.target.value = '';
+                                                }}
+                                            />
+                                        </label>
+                                    </div>
                                     <button type="submit" disabled={processing} className="px-6 py-2 rounded-lg text-sm font-black text-white bg-gradient-to-r from-[#ea580c] to-[#f97316] hover:scale-105 transition-transform shadow-lg shadow-orange-500/20 disabled:opacity-50">
                                         {processing ? 'Saving...' : 'Confirm Assignment'}
                                     </button>

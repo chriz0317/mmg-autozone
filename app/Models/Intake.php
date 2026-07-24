@@ -12,11 +12,12 @@ class Intake extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'checklist' => 'array',
-        'accessories' => 'array',
-        'loose_items' => 'array',
-        'damage_markers' => 'array',
-        'mechanic_recommendations' => 'array',
+        'checklist'               => 'array',
+        'accessories'             => 'array',
+        'loose_items'             => 'array',
+        'damage_markers'          => 'array',
+        'mechanic_recommendations'=> 'array',
+        'progress_photos'         => 'array',
     ];
 
     public function confirmedBy()
@@ -27,5 +28,10 @@ class Intake extends Model
     public function mechanic()
     {
         return $this->belongsTo(User::class, 'mechanic_id');
+    }
+
+    public function serviceRequest()
+    {
+        return $this->belongsTo(ServiceRequest::class, 'estimate_id');
     }
 }

@@ -120,30 +120,89 @@ export default function CustomerDashboard({ auth, estimates }) {
                     </div>
 
                     {estimates && estimates.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {estimates.map(est => (
-                                <Link key={est.id} href={`/service-requests/${est.id}`} className="block p-6 rounded-2xl bg-[#111111] border border-[#1f1f1f] hover:border-[#f97316] transition-colors group">
-                                    <div className="flex justify-between items-start mb-4">
+                        <div className="space-y-6">
+                            {estimates.map(est => {
+                                const intake = est.intake;
+                                const statusColor =
+                                    est.status === 'Approved' ? { bg: 'rgba(16,185,129,0.1)', text: '#10b981', border: 'rgba(16,185,129,0.3)' } :
+                                    est.status === 'unavailable' ? { bg: 'rgba(107,114,128,0.1)', text: '#9ca3af', border: 'rgba(107,114,128,0.3)' } :
+                                    est.status === 'Reviewed'   ? { bg: 'rgba(59,130,246,0.1)',  text: '#3b82f6', border: 'rgba(59,130,246,0.3)'  } :
+                                                                   { bg: 'rgba(249,115,22,0.1)',  text: '#f97316', border: 'rgba(249,115,22,0.3)'  };
+                                const statusLabel = est.status === 'unavailable' ? 'Service Unavailable' : est.status;
+                                return (
+                                <div key={est.id} className="rounded-2xl border border-[#1f1f1f] overflow-hidden" style={{ background: '#111111' }}>
+                                    {/* Card Header */}
+                                    <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div>
-                                            <p className="text-xs text-[#6b7280] font-bold uppercase tracking-wider mb-1 capitalize">{est.service_type.replace('_', ' ')} #{est.id}</p>
-                                            <p className="font-bold text-white group-hover:text-[#f97316] transition-colors">{est.vehicle_model}</p>
+                                            <p className="text-xs text-[#6b7280] font-bold uppercase tracking-wider mb-1 capitalize">
+                                                {est.service_type.replace('_', ' ')} #{est.id}
+                                            </p>
+                                            <p className="font-bold text-white">{est.vehicle_model || 'Vehicle'}</p>
+                                            <p className="text-xs text-[#6b7280] mt-0.5">{new Date(est.created_at).toLocaleDateString()}</p>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border
-                                            ${est.status === 'Approved' ? 'bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.3)]' :
-                                              est.status === 'Rejected' ? 'bg-[rgba(239,68,68,0.1)] text-[#ef4444] border-[rgba(239,68,68,0.3)]' :
-                                              est.status === 'Reviewed' ? 'bg-[rgba(59,130,246,0.1)] text-[#3b82f6] border-[rgba(59,130,246,0.3)]' :
-                                              'bg-[rgba(249,115,22,0.1)] text-[#f97316] border-[rgba(249,115,22,0.3)]'}`}
-                                        >
-                                            {est.status}
+                                        <span className="self-start sm:self-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
+                                            style={{ background: statusColor.bg, color: statusColor.text, borderColor: statusColor.border }}>
+                                            {statusLabel}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-[#9ca3af] line-clamp-2 mb-4">{est.issue_description}</p>
-                                    <div className="flex items-center justify-between text-xs font-medium border-t border-[#1f1f1f] pt-4">
-                                        <span style={{ color: '#6b7280' }}>{new Date(est.created_at).toLocaleDateString()}</span>
-                                        <span className="text-[#f97316] font-bold group-hover:underline">View Details →</span>
+
+                                    {/* Info Sections */}
+                                    <div className="border-t border-[#1f1f1f] grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#1f1f1f]">
+                                        {/* Estimate */}
+                                        <div className="p-4">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#6b7280] mb-2">💰 Cost Estimate</p>
+                                            {est.estimated_cost ? (
+                                                <p className="text-lg font-black" style={{ color: '#f97316' }}>₱{Number(est.estimated_cost).toLocaleString()}</p>
+                                            ) : (
+                                                <p className="text-xs text-[#4b5563] italic">Not provided yet</p>
+                                            )}
+                                            {est.admin_remarks && (
+                                                <p className="text-xs text-[#9ca3af] mt-2 italic">"{est.admin_remarks}"</p>
+                                            )}
+                                        </div>
+
+                                        {/* Inspection Checklist */}
+                                        <div className="p-4">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#6b7280] mb-2">📋 Inspection Checklist</p>
+                                            {intake ? (
+                                                <a href={`/receipt/${intake.reference_number}`} target="_blank" rel="noreferrer"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all"
+                                                    style={{ background: 'rgba(249,115,22,0.15)', border: '1px solid rgba(249,115,22,0.3)' }}
+                                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.25)'}
+                                                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.15)'}>
+                                                    View Checklist →
+                                                </a>
+                                            ) : (
+                                                <p className="text-xs text-[#4b5563] italic">Not started yet</p>
+                                            )}
+                                        </div>
+
+                                        {/* Progress Photos */}
+                                        <div className="p-4">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#6b7280] mb-2">📸 Progress Photos</p>
+                                            {intake && intake.progress_photos && intake.progress_photos.length > 0 ? (
+                                                <div className="flex gap-2 flex-wrap">
+                                                    {intake.progress_photos.slice(0, 4).map((photo, idx) => (
+                                                        <a key={idx} href={photo} target="_blank" rel="noreferrer"
+                                                            className="w-12 h-12 rounded-lg overflow-hidden border border-[#2a2a2a] block hover:border-[#f97316] transition-colors">
+                                                            <img src={photo} alt={`Progress ${idx + 1}`} className="w-full h-full object-cover" />
+                                                        </a>
+                                                    ))}
+                                                    {intake.progress_photos.length > 4 && (
+                                                        <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-bold text-[#6b7280]"
+                                                            style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
+                                                            +{intake.progress_photos.length - 4}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <p className="text-xs text-[#4b5563] italic">No photos yet</p>
+                                            )}
+                                        </div>
                                     </div>
-                                </Link>
-                            ))}
+                                </div>
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="text-center py-20 bg-[#111111] rounded-2xl border border-[#1f1f1f]">

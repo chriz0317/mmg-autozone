@@ -118,7 +118,6 @@ function RepairForm() {
         email: '',
         vehicle_model: '',
         plate_no: '',
-        issue_description: '',
         preferred_date: '',
     });
 
@@ -144,18 +143,6 @@ function RepairForm() {
                 <FormField label="Plate Number" id="repair_plate" value={data.plate_no} onChange={v => setData('plate_no', v)} placeholder="ABC 1234" />
             </div>
 
-            <div>
-                <label htmlFor="repair_desc" className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#9ca3af' }}>
-                    Problem Description <span style={{ color: '#f97316' }}>*</span>
-                </label>
-                <textarea id="repair_desc" rows={4} value={data.issue_description}
-                    onChange={e => setData('issue_description', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none resize-none"
-                    style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', caretColor: '#f97316' }}
-                    onFocus={e => e.target.style.border = '1px solid rgba(249,115,22,0.4)'}
-                    onBlur={e => e.target.style.border = '1px solid #2a2a2a'}
-                    placeholder="Describe the issue (engine noise, AC not working, etc.)" required />
-            </div>
             <FormField label="Preferred Drop-off Date" id="repair_date" type="date" value={data.preferred_date} onChange={v => setData('preferred_date', v)} />
             
             <button type="submit" disabled={processing}
@@ -176,7 +163,6 @@ function PhotoEstimateForm() {
         email: '',
         vehicle_model: '',
         plate_no: '',
-        issue_description: '',
         photos: []
     });
 
@@ -228,19 +214,6 @@ function PhotoEstimateForm() {
                 </div>
             )}
 
-            <div>
-                <label htmlFor="estimate_desc" className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#9ca3af' }}>
-                    Problem Description <span style={{ color: '#f97316' }}>*</span>
-                </label>
-                <textarea id="estimate_desc" rows={4} value={data.issue_description}
-                    onChange={e => setData('issue_description', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none resize-none"
-                    style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', caretColor: '#f97316' }}
-                    onFocus={e => e.target.style.border = '1px solid rgba(249,115,22,0.4)'}
-                    onBlur={e => e.target.style.border = '1px solid #2a2a2a'}
-                    placeholder="Describe the damage..." required />
-                {errors.issue_description && <p className="text-red-500 text-xs mt-1">{errors.issue_description}</p>}
-            </div>
 
             <div>
                 <label className="block text-xs font-black uppercase tracking-widest text-[#6b7280] mb-2">Upload Photos</label>
@@ -292,7 +265,6 @@ function RepaintForm() {
         plate_no: '',
         areas: [],
         color_preference: '',
-        additional_notes: '',
         preferred_date: '',
     });
 
@@ -347,16 +319,6 @@ function RepaintForm() {
 
             <FormField label="Color Preference" id="repaint_color" value={data.color_preference} onChange={v => setData('color_preference', v)} placeholder="Pearl White, Midnight Black, same color…" />
 
-            <div>
-                <label htmlFor="repaint_notes" className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#9ca3af' }}>Additional Notes</label>
-                <textarea id="repaint_notes" rows={3} value={data.additional_notes}
-                    onChange={e => setData('additional_notes', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none resize-none"
-                    style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', caretColor: '#f97316' }}
-                    onFocus={e => e.target.style.border = '1px solid rgba(249,115,22,0.4)'}
-                    onBlur={e => e.target.style.border = '1px solid #2a2a2a'}
-                    placeholder="Special instructions or concerns…" />
-            </div>
 
             <FormField label="Preferred Drop-off Date" id="repaint_date" type="date" value={data.preferred_date} onChange={v => setData('preferred_date', v)} />
 

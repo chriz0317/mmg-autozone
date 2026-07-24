@@ -38,7 +38,7 @@ export default function IntakeForm({ auth }) {
         spare_tire_brand: '✓', jack_tools: '✓', matting: '✓', hub_caps: '✓',
         ewd: '✓', oil_water_level: '✓',
         tire_frt_lh: '', tire_rr_lh: '', tire_frt_rh: '', tire_rr_rh: '',
-        tire_inflation: '', remote_key: ''
+        tire_inflation: '✓', remote_key: '✓'
     });
 
     const [accessories, setAccessories] = useState([]);

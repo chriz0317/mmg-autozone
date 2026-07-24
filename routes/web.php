@@ -220,6 +220,7 @@ Route::middleware(['role:admin,admin'])->group(function () {
 
     Route::post('/admin/intakes/{intake}/assign', [\App\Http\Controllers\AdminController::class, 'assignMechanic'])->name('admin.intakes.assign');
     Route::post('/admin/intakes/{intake}/ready', [\App\Http\Controllers\AdminController::class, 'markReady'])->name('admin.intakes.ready');
+    Route::post('/admin/intakes/{intake}/progress-photos', [\App\Http\Controllers\AdminController::class, 'uploadProgressPhotos'])->name('admin.intakes.progress-photos');
 
     // Admin POS
     Route::get('/admin/pos', [\App\Http\Controllers\POSController::class, 'index'])->name('admin.pos');
