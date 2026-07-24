@@ -13,15 +13,9 @@ class IntakeCreated extends Notification implements ShouldQueue
     use Queueable;
 
     public $intake;
-    public $pdfData;
-
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(Intake $intake, $pdfData = null)
+    public function __construct(Intake $intake)
     {
         $this->intake = $intake;
-        $this->pdfData = $pdfData;
     }
 
     /**
@@ -49,11 +43,13 @@ class IntakeCreated extends Notification implements ShouldQueue
                     ->line('Our team will keep you updated on the progress of your vehicle.')
                     ->line('Thank you for trusting MMG Autozone!');
 
-        if ($this->pdfData) {
-            $mail->attachData($this->pdfData, 'Job_Order_' . $this->intake->reference_number . '.pdf', [
-                'mime' => 'application/pdf',
-            ]);
-        }
+        $pdfData = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.receipt', [
+            'intake' => $this->intake
+        ])->output();
+
+        $mail->attachData($pdfData, 'Job_Order_' . $this->intake->reference_number . '.pdf', [
+            'mime' => 'application/pdf',
+        ]);
 
         return $mail;
     }

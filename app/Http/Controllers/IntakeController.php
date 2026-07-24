@@ -70,15 +70,10 @@ class IntakeController extends Controller
 
         // Dispatch notification if email exists
         if ($request->email) {
-            // Generate Job Order PDF
-            $pdfData = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.receipt', [
-                'intake' => $intake
-            ])->output();
-
             $notifiable = (object) ['name' => $intake->customer ?? 'Customer', 'email' => $request->email];
             
             \Illuminate\Support\Facades\Notification::route('mail', $request->email)
-                ->notify(new \App\Notifications\IntakeCreated($intake, $pdfData));
+                ->notify(new \App\Notifications\IntakeCreated($intake));
         }
 
         // 3. Send the user straight to the receipt/PDF generation page
