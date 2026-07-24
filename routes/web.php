@@ -239,6 +239,11 @@ Route::middleware(['role:admin,admin'])->group(function () {
 
     // Repair Order
     Route::get('/admin/intakes/{intake}/repair-order', [\App\Http\Controllers\IntakeController::class, 'repairOrderPdf'])->name('admin.intakes.repair-order');
+    // Formal Repair Estimates
+    Route::get('/admin/repair-estimates', [\App\Http\Controllers\RepairEstimateController::class, 'index'])->name('admin.estimates.index');
+    Route::get('/admin/repair-estimates/create', [\App\Http\Controllers\RepairEstimateController::class, 'create'])->name('admin.estimates.create');
+    Route::post('/admin/repair-estimates', [\App\Http\Controllers\RepairEstimateController::class, 'store'])->name('admin.estimates.store');
+    Route::get('/admin/repair-estimates/{id}/pdf', [\App\Http\Controllers\RepairEstimateController::class, 'generatePdf'])->name('admin.estimates.pdf');
 });
 
 // Official Receipt PDF

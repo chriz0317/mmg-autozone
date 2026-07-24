@@ -55,6 +55,16 @@ export default function AdminLayout({ children }) {
                     </Link>
 
                     <Link 
+                        href="/admin/repair-estimates" 
+                        title="Repair Estimates"
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition font-semibold text-sm ${isActive('/admin/repair-estimates') ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                        style={isActive('/admin/repair-estimates') ? { background: 'linear-gradient(135deg, #ea580c, #f97316)', boxShadow: '0 4px 12px rgba(249,115,22,0.2)' } : {}}
+                    >
+                        <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span className={`transition-opacity duration-200 whitespace-nowrap ${isSidebarOpen ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden hidden'}`}>Repair Estimates</span>
+                    </Link>
+
+                    <Link 
                         href="/admin/pos" 
                         title="Point of Sale"
                         className={`w-full flex items-center gap-3 p-3 rounded-xl transition font-semibold text-sm ${isActive('/admin/pos') || isActive('/pos') ? 'text-white' : 'text-gray-400 hover:text-white'}`}
@@ -104,6 +114,7 @@ export default function AdminLayout({ children }) {
                         <h1 className="text-xl md:text-2xl font-black text-white tracking-wide truncate">
                             {url === '/admin' && 'Command Center'}
                             {isActive('/admin/services') && 'Service Requests'}
+                            {isActive('/admin/repair-estimates') && 'Repair Estimates'}
                             {(isActive('/admin/pos') || isActive('/pos')) && 'Point of Sale'}
                             {isActive('/admin/inventory') && 'Inventory Management'}
                             {isActive('/admin/unit-in') && 'Unit In — Workshop Tracker'}
