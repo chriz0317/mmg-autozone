@@ -123,12 +123,16 @@ export default function CustomerDashboard({ auth, estimates }) {
                         <div className="space-y-6">
                             {estimates.map(est => {
                                 const intake = est.intake;
+                                const currentStatus = intake ? intake.status : est.status;
+                                
                                 const statusColor =
-                                    est.status === 'Approved' ? { bg: 'rgba(16,185,129,0.1)', text: '#10b981', border: 'rgba(16,185,129,0.3)' } :
-                                    est.status === 'unavailable' ? { bg: 'rgba(107,114,128,0.1)', text: '#9ca3af', border: 'rgba(107,114,128,0.3)' } :
-                                    est.status === 'Reviewed'   ? { bg: 'rgba(59,130,246,0.1)',  text: '#3b82f6', border: 'rgba(59,130,246,0.3)'  } :
+                                    currentStatus === 'Ready for Pickup' || currentStatus === 'Released' ? { bg: 'rgba(16,185,129,0.1)', text: '#10b981', border: 'rgba(16,185,129,0.3)' } :
+                                    currentStatus === 'In Progress' ? { bg: 'rgba(59,130,246,0.1)',  text: '#3b82f6', border: 'rgba(59,130,246,0.3)'  } :
+                                    currentStatus === 'Approved' ? { bg: 'rgba(16,185,129,0.1)', text: '#10b981', border: 'rgba(16,185,129,0.3)' } :
+                                    currentStatus === 'unavailable' ? { bg: 'rgba(107,114,128,0.1)', text: '#9ca3af', border: 'rgba(107,114,128,0.3)' } :
                                                                    { bg: 'rgba(249,115,22,0.1)',  text: '#f97316', border: 'rgba(249,115,22,0.3)'  };
-                                const statusLabel = est.status === 'unavailable' ? 'Service Unavailable' : est.status;
+                                
+                                const statusLabel = currentStatus === 'unavailable' ? 'Service Unavailable' : currentStatus;
                                 return (
                                 <div key={est.id} className="rounded-2xl border border-[#1f1f1f] overflow-hidden" style={{ background: '#111111' }}>
                                     {/* Card Header */}
