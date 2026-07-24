@@ -14,8 +14,15 @@ class RepairEstimateController extends Controller
     public function index()
     {
         $estimates = RepairEstimate::with('items')->orderBy('created_at', 'desc')->get();
+        
+        $intakes = \App\Models\Intake::with('repairEstimate')
+            ->where('status', '!=', 'Released')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
         return Inertia::render('Admin/RepairEstimates/Index', [
-            'estimates' => $estimates
+            'estimates' => $estimates,
+            'intakes' => $intakes
         ]);
     }
 

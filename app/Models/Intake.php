@@ -25,6 +25,11 @@ class Intake extends Model
         return $this->belongsTo(User::class, 'confirmed_by_id');
     }
 
+    public function repairEstimate()
+    {
+        return $this->hasOne(RepairEstimate::class);
+    }
+
     public function mechanic()
     {
         return $this->belongsTo(User::class, 'mechanic_id');
