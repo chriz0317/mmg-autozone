@@ -240,6 +240,8 @@ export default function IntakeForm({ auth }) {
         { label: 'Hub Caps / Center Caps', key: 'hub_caps' },
         { label: 'EWD', key: 'ewd' },
         { label: 'Oil / Water Level', key: 'oil_water_level' },
+        { label: 'Tire Inflation', key: 'tire_inflation' },
+        { label: 'Remote Key Working', key: 'remote_key' },
     ];
 
     return (
@@ -408,35 +410,7 @@ export default function IntakeForm({ auth }) {
                                     </div>
                                 ))}
                             </div>
-                            <div className="grid grid-cols-2 gap-4 pt-3">
-                                {[['Tire Inflation', 'tire_inflation'], ['Remote Key Working', 'remote_key']].map(([label, key]) => (
-                                    <div key={key} className="flex flex-col gap-1">
-                                        <label className="text-xs font-bold" style={{ color: '#9ca3af' }}>{label}</label>
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex rounded-lg p-0.5 border" style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}>
-                                                {['✓', 'X'].map(status => (
-                                                    <button
-                                                        key={status}
-                                                        type="button"
-                                                        onClick={() => setChecklist({...checklist, [key]: checklist[key] === status ? '' : status})}
-                                                        className={`px-3 py-1 text-xs font-bold rounded-md transition ${checklist[key] === status ? (status === '✓' ? 'bg-[#10b981] text-white' : 'bg-[#ef4444] text-white') : 'hover:text-white'}`}
-                                                        style={checklist[key] !== status ? { color: '#6b7280' } : {}}
-                                                    >{status}</button>
-                                                ))}
-                                            </div>
-                                            <input
-                                                type="text"
-                                                placeholder="Remarks"
-                                                onChange={e => setChecklist({...checklist, [`${key}_remarks`]: e.target.value})}
-                                                className="flex-1 px-2 py-1 text-xs rounded-md border outline-none text-white"
-                                                style={{ borderColor: '#2a2a2a', background: '#1a1a1a' }}
-                                                onFocus={e => e.target.style.borderColor = '#f97316'}
-                                                onBlur={e => e.target.style.borderColor = '#2a2a2a'}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+
                             <div className="flex items-center pt-3 gap-2">
                                 <label className="text-xs font-bold w-16 shrink-0" style={{ color: '#9ca3af' }}>Mileage:</label>
                                 <input
