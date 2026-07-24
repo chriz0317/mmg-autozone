@@ -43,9 +43,11 @@ class ServiceRequestReviewed extends Notification implements ShouldQueue
         $type = str_replace('_', ' ', $this->serviceRequest->service_type);
         $cost = number_format($this->serviceRequest->estimated_cost, 2);
 
+        $name = $this->serviceRequest->name ?? optional($this->serviceRequest->user)->name ?? 'Customer';
+
         $mail = (new MailMessage)
                     ->subject("Your $type Request at MMG Autozone - $status")
-                    ->greeting("Hello {$notifiable->name},")
+                    ->greeting("Hello {$name},")
                     ->line("Your $type request for your {$this->serviceRequest->vehicle_model} has been reviewed.")
                     ->line("Status: **$status**");
 

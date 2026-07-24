@@ -26,7 +26,7 @@ export default function AdminLayout({ children }) {
                     <div className={`transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100 w-full' : 'opacity-0 w-0 overflow-hidden absolute'}`}>
                         <img src="/images/bg2.png" alt="MMG Badge" className="w-12 h-12 object-cover rounded-full bg-white mx-auto mb-2" />
                         <h2 className="text-lg font-black tracking-widest text-white whitespace-nowrap">MMG AUTOZONE</h2>
-                        <p className="text-[10px] uppercase tracking-widest" style={{ color: '#f97316' }}>{auth?.user?.role || 'Admin Portal'}</p>
+                        <p className="text-[10px] uppercase tracking-widest" style={{ color: '#f97316' }}>ADMIN PORTAL</p>
                     </div>
                     {!isSidebarOpen && (
                         <img src="/images/bg2.png" alt="MMG Badge" className="w-10 h-10 object-cover rounded-full bg-white mx-auto" />
