@@ -152,7 +152,12 @@ export default function CustomerDashboard({ auth, estimates }) {
                                         <div className="p-4">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-[#6b7280] mb-2">💰 Cost Estimate</p>
                                             {est.estimated_cost ? (
-                                                <p className="text-lg font-black" style={{ color: '#f97316' }}>₱{Number(est.estimated_cost).toLocaleString()}</p>
+                                                <>
+                                                    <p className="text-lg font-black" style={{ color: '#f97316' }}>₱{Number(est.estimated_cost).toLocaleString()}</p>
+                                                    <p className="text-[9px] font-semibold text-orange-400 uppercase tracking-widest mt-1 leading-tight">
+                                                        * Not a final amount. Subject to change upon physical inspection.
+                                                    </p>
+                                                </>
                                             ) : (
                                                 <p className="text-xs text-[#4b5563] italic">Not provided yet</p>
                                             )}

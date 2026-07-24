@@ -220,7 +220,9 @@ export default function ServicesList({ auth, serviceRequests }) {
                                             placeholder="e.g. 15000.00"
                                             className="w-full px-3 py-2 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-sm text-white outline-none focus:border-[#f97316]"
                                         />
-                                        <p className="text-[10px] text-[#6b7280] mt-1">Leave empty if you cannot determine the cost yet.</p>
+                                        <p className="text-[10px] text-orange-400 mt-1 font-semibold leading-tight">
+                                            ⚠️ Note: Estimates given based on photos are NOT final. The actual cost may vary upon physical inspection. Leave empty if you cannot determine the cost yet.
+                                        </p>
                                     </div>
 
                                     <div>
