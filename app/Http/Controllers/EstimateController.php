@@ -39,7 +39,9 @@ class EstimateController extends Controller
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $uploadedFileUrl = $photo->storeOnCloudinary('estimates')->getSecurePath();
+                $uploadedFileUrl = cloudinary()->upload($photo->getRealPath(), [
+                    'folder' => 'estimates'
+                ])->getSecurePath();
                 $photoPaths[] = $uploadedFileUrl;
             }
         }
