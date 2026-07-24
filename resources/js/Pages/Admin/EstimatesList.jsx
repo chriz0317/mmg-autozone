@@ -72,7 +72,7 @@ export default function EstimatesList({ auth, estimates }) {
                                                           est.status === 'Reviewed' ? 'bg-[rgba(59,130,246,0.1)] text-[#3b82f6] border-[rgba(59,130,246,0.3)]' :
                                                           'bg-[rgba(249,115,22,0.1)] text-[#f97316] border-[rgba(249,115,22,0.3)]'}`}
                                                     >
-                                                        {est.status}
+                                                        {est.status === 'Rejected' ? 'Service Unavailable' : est.status}
                                                     </span>
                                                 </td>
                                                 <td className="p-4 text-right">
@@ -134,7 +134,7 @@ export default function EstimatesList({ auth, estimates }) {
                                             <option value="Pending">Pending</option>
                                             <option value="Reviewed">Reviewed (Need more info)</option>
                                             <option value="Approved">Approved (Ready for drop-off)</option>
-                                            <option value="unavailable">Service Unavailable</option>
+                                            <option value="Rejected">Service Unavailable</option>
                                         </select>
                                     </div>
 
