@@ -230,6 +230,10 @@ export default function UnitIn({ intakes, flash }) {
                                                             className="text-xs font-bold text-[#3b82f6] hover:underline whitespace-nowrap">
                                                             📋 Checklist
                                                         </a>
+                                                        <a href={`/admin/repair-estimates/create?intake_id=${intake.id}`}
+                                                            className="text-xs font-bold text-orange-500 hover:underline whitespace-nowrap">
+                                                            📝 Estimate
+                                                        </a>
                                                         <button
                                                             onClick={() => handleRelease(intake)}
                                                             disabled={isReleasing}

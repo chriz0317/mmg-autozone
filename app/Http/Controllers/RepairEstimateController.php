@@ -19,9 +19,15 @@ class RepairEstimateController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return Inertia::render('Admin/RepairEstimates/Create');
+        $intake = null;
+        if ($request->has('intake_id')) {
+            $intake = \App\Models\Intake::find($request->intake_id);
+        }
+        return Inertia::render('Admin/RepairEstimates/Create', [
+            'intake' => $intake
+        ]);
     }
 
     public function store(Request $request)
@@ -36,6 +42,7 @@ class RepairEstimateController extends Controller
         $estimateNo = date('ymd') . strtoupper(Str::random(3));
 
         $estimate = RepairEstimate::create([
+            'intake_id' => $request->intake_id,
             'estimate_no' => $estimateNo,
             'customer_name' => $request->customer_name,
             'address' => $request->address,

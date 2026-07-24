@@ -15,6 +15,11 @@ class RepairEstimate extends Model
         'date' => 'date',
     ];
 
+    public function intake()
+    {
+        return $this->belongsTo(Intake::class);
+    }
+
     public function items()
     {
         return $this->hasMany(RepairEstimateItem::class);

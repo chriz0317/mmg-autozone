@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-export default function RepairEstimatesCreate() {
+export default function RepairEstimatesCreate({ intake }) {
     const { data, setData, post, processing, errors } = useForm({
-        customer_name: '',
+        intake_id: intake?.id || null,
+        customer_name: intake?.customer || '',
         address: '',
-        contact_no: '',
+        contact_no: intake?.contact_no || '',
         insurance: '',
-        reference_no: '',
+        reference_no: intake?.reference_number || '',
         days_of_repair: '10 WORKING DAYS',
         prepared_by: '',
-        vehicle_model: '',
-        plate_no: '',
+        vehicle_model: intake?.vehicle || '',
+        plate_no: intake?.plate_no || '',
         color: '',
         frame_no: '',
         date: new Date().toISOString().split('T')[0],
