@@ -118,19 +118,11 @@ class ServiceRequestController extends Controller
 
         // Dispatch notification if email exists and status is updated
         if ($email) {
-            $pdfData = null;
-            if ($request->status === 'Approved' || $request->estimated_cost) {
-                // Generate Quotation PDF
-                $pdfData = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.quotation', [
-                    'serviceRequest' => $serviceRequest
-                ])->output();
-            }
-
             // We use Notification::route to send to a specific email if the user is a guest
             $notifiable = $serviceRequest->user ?? (object) ['name' => $serviceRequest->name ?? 'Customer', 'email' => $email];
             
             \Illuminate\Support\Facades\Notification::route('mail', $email)
-                ->notify(new \App\Notifications\ServiceRequestReviewed($serviceRequest, $pdfData));
+                ->notify(new \App\Notifications\ServiceRequestReviewed($serviceRequest));
         }
 
         return redirect()->back()->with('success', 'Service request updated successfully.');

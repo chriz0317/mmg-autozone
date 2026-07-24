@@ -13,15 +13,10 @@ class ServiceRequestReviewed extends Notification implements ShouldQueue
     use Queueable;
 
     public $serviceRequest;
-    public $pdfData;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(ServiceRequest $serviceRequest, $pdfData = null)
+    public function __construct(ServiceRequest $serviceRequest)
     {
         $this->serviceRequest = $serviceRequest;
-        $this->pdfData = $pdfData;
     }
 
     /**
@@ -68,8 +63,12 @@ class ServiceRequestReviewed extends Notification implements ShouldQueue
         
         $mail->line('Thank you for choosing MMG Autozone!');
 
-        if ($this->pdfData) {
-            $mail->attachData($this->pdfData, 'Quotation.pdf', [
+        if ($status === 'Approved' || $this->serviceRequest->estimated_cost) {
+            $pdfData = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.quotation', [
+                'serviceRequest' => $this->serviceRequest
+            ])->output();
+
+            $mail->attachData($pdfData, 'Quotation.pdf', [
                 'mime' => 'application/pdf',
             ]);
         }
