@@ -16,11 +16,11 @@ class POSController extends Controller
     public function index()
     {
         $transactions = Transaction::with('items')->orderBy('created_at', 'desc')->get();
-        $intakes = \App\Models\Intake::where('status', '!=', 'Completed')->orWhereNull('status')->get();
+        $estimates = \App\Models\RepairEstimate::with('intake')->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('POS/Checkout', [
             'transactions' => $transactions,
-            'intakes' => $intakes,
+            'estimates' => $estimates,
             // Assuming we might want to attach a customer
             'customers' => \App\Models\User::where('role', 'customer')->get(['id', 'name', 'email'])
         ]);
@@ -31,7 +31,7 @@ class POSController extends Controller
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|integer',
-            'items.*.type' => 'required|in:intake',
+            'items.*.type' => 'required|in:estimate',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'total_amount' => 'required|numeric|min:0',
@@ -54,15 +54,18 @@ class POSController extends Controller
             foreach ($request->items as $item) {
                 $subtotal = $item['price'] * $item['quantity'];
                 
-                if ($item['type'] === 'intake') {
-                    $intake = \App\Models\Intake::findOrFail($item['id']);
-                    $itemName = "Repair Job: " . $intake->reference_number;
+                if ($item['type'] === 'estimate') {
+                    $estimate = \App\Models\RepairEstimate::findOrFail($item['id']);
+                    $itemName = "Repair Quote: " . $estimate->estimate_no;
                     
-                    // Mark the intake as completed
-                    $intake->status = 'Completed';
-                    // Update final amount to pay if there's any additional charges
-                    $intake->amount_to_pay = $subtotal + (isset($item['additionalChargeAmount']) ? $item['additionalChargeAmount'] : 0);
-                    $intake->save();
+                    if ($estimate->intake_id) {
+                        $intake = \App\Models\Intake::find($estimate->intake_id);
+                        if ($intake) {
+                            $intake->status = 'Completed';
+                            $intake->amount_to_pay = $subtotal + (isset($item['additionalChargeAmount']) ? $item['additionalChargeAmount'] : 0);
+                            $intake->save();
+                        }
+                    }
                 } else {
                     $itemName = "Product/Material"; // default fallback, though frontend sends correct names usually
                 }

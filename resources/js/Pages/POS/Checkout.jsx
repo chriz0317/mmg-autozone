@@ -2,9 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import AdminLayout from '../../Layouts/AdminLayout';
 
-export default function Checkout({ auth, transactions = [], intakes = [], customers, flash, errors }) {
+export default function Checkout({ auth, transactions = [], estimates = [], customers, flash, errors }) {
     const [cart, setCart] = useState([]);
-    const [activeTab, setActiveTab] = useState('intakes'); // 'intakes' or 'history'
+    const [activeTab, setActiveTab] = useState('estimates'); // 'estimates' or 'history'
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [vehicleModel, setVehicleModel] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('Cash'); // Cash, Card, GCash
@@ -13,7 +13,7 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
 
     useEffect(() => {
         const interval = setInterval(() => {
-            router.reload({ only: ['transactions', 'intakes', 'customers'], preserveScroll: true, preserveState: true });
+            router.reload({ only: ['transactions', 'estimates', 'customers'], preserveScroll: true, preserveState: true });
         }, 10000); // 10 seconds
         return () => clearInterval(interval);
     }, []);
@@ -23,7 +23,7 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
         (t.user?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.id.toString().includes(searchQuery)
     );
-    const filteredIntakes = intakes.filter(i => (i.reference_number + i.customer).toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredEstimates = estimates.filter(e => (e.estimate_no + e.customer_name).toLowerCase().includes(searchQuery.toLowerCase()));
 
     // Add to cart function
     const addToCart = (item, type) => {
@@ -141,10 +141,10 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
                         />
                         <div className="flex gap-4 mt-6">
                             <button 
-                                onClick={() => setActiveTab('intakes')}
-                                className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider rounded-xl transition-all ${activeTab === 'intakes' ? 'bg-[#f97316] text-white shadow-lg shadow-orange-500/20' : 'bg-[#111] text-[#6b7280] border border-[#2a2a2a] hover:border-[#f97316]'}`}
+                                onClick={() => setActiveTab('estimates')}
+                                className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider rounded-xl transition-all ${activeTab === 'estimates' ? 'bg-[#f97316] text-white shadow-lg shadow-orange-500/20' : 'bg-[#111] text-[#6b7280] border border-[#2a2a2a] hover:border-[#f97316]'}`}
                             >
-                                Active Repairs
+                                Active Estimates
                             </button>
                             <button 
                                 onClick={() => setActiveTab('history')}
@@ -157,21 +157,21 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
 
                     <div className="flex-1 overflow-y-auto p-6">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {activeTab === 'intakes' && filteredIntakes.map(intake => (
-                                <div key={intake.id} className="relative flex flex-col text-left bg-[#111] border border-[#1f1f1f] rounded-2xl overflow-hidden hover:border-[#f97316] transition-all group">
+                            {activeTab === 'estimates' && filteredEstimates.map(estimate => (
+                                <div key={estimate.id} className="relative flex flex-col text-left bg-[#111] border border-[#1f1f1f] rounded-2xl overflow-hidden hover:border-[#f97316] transition-all group">
                                     <button 
-                                        onClick={() => addToCart({ ...intake, name: 'Job: ' + intake.reference_number, price: intake.amount_to_pay || 0 }, 'intake')}
+                                        onClick={() => addToCart({ ...estimate, name: 'Quote: ' + estimate.estimate_no, price: estimate.net_due || 0 }, 'estimate')}
                                         className="flex-1 p-4 flex flex-col text-left hover:bg-[#1a1a1a]"
                                     >
-                                        <div className="absolute top-0 right-0 px-2 py-1 bg-orange-500/10 text-orange-500 text-[10px] font-black rounded-bl-lg">REPAIR JOB</div>
-                                        <span className="text-xs font-bold text-[#6b7280] mb-1">{intake.reference_number}</span>
-                                        <span className="text-sm font-bold text-white mb-2">{intake.customer}</span>
-                                        <span className="text-xs text-[#9ca3af] mb-3 flex-1">{intake.vehicle}</span>
-                                        <span className="text-[#f97316] font-black text-lg">₱{Number(intake.amount_to_pay || 0).toLocaleString()}</span>
+                                        <div className="absolute top-0 right-0 px-2 py-1 bg-orange-500/10 text-orange-500 text-[10px] font-black rounded-bl-lg">FORMAL QUOTE</div>
+                                        <span className="text-xs font-bold text-[#6b7280] mb-1">{estimate.estimate_no}</span>
+                                        <span className="text-sm font-bold text-white mb-2">{estimate.customer_name}</span>
+                                        <span className="text-xs text-[#9ca3af] mb-3 flex-1">{estimate.vehicle_model}</span>
+                                        <span className="text-[#f97316] font-black text-lg">₱{Number(estimate.net_due || 0).toLocaleString()}</span>
                                     </button>
                                     <div className="p-2 border-t border-[#1f1f1f] bg-[#0a0a0a]">
-                                        <a href={`/admin/intakes/${intake.id}/repair-order`} target="_blank" rel="noreferrer" className="w-full text-center block text-xs font-bold text-[#3b82f6] hover:text-[#60a5fa] py-1">
-                                            🖨️ Print Repair Order
+                                        <a href={`/admin/repair-estimates/${estimate.id}/pdf`} target="_blank" rel="noreferrer" className="w-full text-center block text-xs font-bold text-[#3b82f6] hover:text-[#60a5fa] py-1">
+                                            🖨️ Print Quotation
                                         </a>
                                     </div>
                                 </div>
