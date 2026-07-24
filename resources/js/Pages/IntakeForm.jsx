@@ -67,12 +67,12 @@ export default function IntakeForm({ auth }) {
     const [estimatePhotos, setEstimatePhotos] = useState([]);
 
     useEffect(() => {
-        fetch('/api/estimates')
+        fetch('/api/service-requests')
             .then(res => res.json())
             .then(data => {
                 setAvailableEstimates(data);
                 const params = new URLSearchParams(window.location.search);
-                const queryId = params.get('estimate_id');
+                const queryId = params.get('estimate_id') || params.get('request_id');
                 if (queryId) {
                     const est = data.find(x => x.id == queryId);
                     if (est) {
@@ -85,13 +85,13 @@ export default function IntakeForm({ auth }) {
                             address: est.user?.address || prev.address,
                             vehicle: est.vehicle_model || prev.vehicle,
                             plate_no: est.plate_no || prev.plate_no,
-                            scope_of_works: est.issue_description || prev.scope_of_works
+                            scope_of_works: est.issue_description || (est.service_type ? est.service_type.replace('_', ' ') : prev.scope_of_works)
                         }));
                         setEstimatePhotos(est.photos || []);
                     }
                 }
             })
-            .catch(err => console.error("Error fetching estimates:", err));
+            .catch(err => console.error("Error fetching service requests:", err));
     }, []);
 
     const handleEstimateSelect = (e) => {
