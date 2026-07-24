@@ -142,4 +142,17 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Progress photos uploaded successfully.');
     }
+
+    public function releaseVehicle(Intake $intake)
+    {
+        $intake->update(['status' => 'Released']);
+
+        \App\Models\ActivityLog::create([
+            'user_id'     => Auth::id() ?? Auth::guard('admin')->id(),
+            'action'      => 'Vehicle Released',
+            'description' => "Released vehicle for Intake {$intake->reference_number} — {$intake->customer} ({$intake->vehicle})",
+        ]);
+
+        return redirect()->back()->with('success', "Vehicle {$intake->reference_number} has been released.");
+    }
 }
