@@ -226,10 +226,10 @@ export default function IntakeForm({ auth }) {
         { label: 'Horn', key: 'horn' },
         { label: 'Windshield Crack', key: 'windshield_crack' },
         { label: 'Wipers', key: 'wipers' },
+        { label: 'Window Tints', key: 'window_tints' },
     ];
 
     const rightColumnItems = [
-        { label: 'Window Tints', key: 'window_tints' },
         { label: 'Side Mirrors', key: 'side_mirrors' },
         { label: 'Front Bumper Sensor', key: 'front_bumper_sensor' },
         { label: 'Rear Bumper Sensor', key: 'rear_bumper_sensor' },
