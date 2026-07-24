@@ -84,4 +84,13 @@ class IntakeController extends Controller
         // 3. Send the user straight to the receipt/PDF generation page
         return redirect('/success/' . $intake->reference_number);
     }
+
+    public function repairOrderPdf(Intake $intake)
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.repair_order', [
+            'intake' => $intake
+        ]);
+
+        return $pdf->stream('Repair_Order_' . $intake->reference_number . '.pdf');
+    }
 }

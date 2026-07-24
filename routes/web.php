@@ -236,8 +236,13 @@ Route::middleware(['role:admin,admin'])->group(function () {
     // Unit In Tracker
     Route::get('/admin/unit-in', [\App\Http\Controllers\UnitInController::class, 'index'])->name('admin.unit-in');
     Route::post('/admin/intakes/{intake}/release', [\App\Http\Controllers\AdminController::class, 'releaseVehicle'])->name('admin.intakes.release');
+
+    // Repair Order
+    Route::get('/admin/intakes/{intake}/repair-order', [\App\Http\Controllers\IntakeController::class, 'repairOrderPdf'])->name('admin.intakes.repair-order');
 });
 
+// Official Receipt PDF
+Route::get('/or/{transaction}/pdf', [\App\Http\Controllers\TransactionController::class, 'downloadOrPdf'])->name('or.pdf');
 
 require __DIR__.'/auth.php';
 

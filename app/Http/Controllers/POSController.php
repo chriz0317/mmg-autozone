@@ -60,18 +60,39 @@ class POSController extends Controller
                     
                     // Mark the intake as completed
                     $intake->status = 'Completed';
+                    // Update final amount to pay if there's any additional charges
+                    $intake->amount_to_pay = $subtotal + (isset($item['additionalChargeAmount']) ? $item['additionalChargeAmount'] : 0);
                     $intake->save();
+                } else {
+                    $itemName = "Product/Material"; // default fallback, though frontend sends correct names usually
                 }
 
                 TransactionItem::create([
                     'transaction_id' => $transaction->id,
                     'item_type' => $item['type'],
                     'item_id' => $item['id'],
-                    'item_name' => $itemName,
+                    // If we have an item name passed from front end, use it instead of generating
+                    // Wait, frontend doesn't send item name inside items array right now, it sends id, type, quantity, price, additionalChargeDesc, additionalChargeAmount
+                    // So we must rely on $itemName for intake. For products, we don't have the name here unless passed.
+                    // Oh wait, looking at the previous POSController code, it was already doing this:
+                    'item_name' => $itemName ?? 'Item',
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                     'subtotal' => $subtotal,
                 ]);
+
+                // Check for additional charges and create a separate transaction item
+                if (isset($item['additionalChargeAmount']) && $item['additionalChargeAmount'] > 0) {
+                    TransactionItem::create([
+                        'transaction_id' => $transaction->id,
+                        'item_type' => 'additional_charge',
+                        'item_id' => $item['id'],
+                        'item_name' => "Add-on: " . ($item['additionalChargeDesc'] ?: 'Additional Charges'),
+                        'quantity' => 1,
+                        'unit_price' => $item['additionalChargeAmount'],
+                        'subtotal' => $item['additionalChargeAmount'],
+                    ]);
+                }
             }
 
             ActivityLogger::log('pos_checkout', 'Processed POS transaction #'.$transaction->id, [

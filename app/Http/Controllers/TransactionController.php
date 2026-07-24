@@ -50,4 +50,26 @@ class TransactionController extends Controller
             'intakeDetails' => $intakeDetails,
         ]);
     }
+
+    public function downloadOrPdf(Transaction $transaction)
+    {
+        $transaction->load(['items', 'user']);
+
+        $intakeDetails = [];
+        foreach ($transaction->items as $item) {
+            if ($item->item_type === 'intake') {
+                $intake = \App\Models\Intake::with(['mechanic', 'confirmedBy'])->find($item->item_id);
+                if ($intake) {
+                    $intakeDetails[$item->id] = $intake;
+                }
+            }
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.official_receipt', [
+            'transaction' => $transaction,
+            'intakeDetails' => $intakeDetails
+        ]);
+
+        return $pdf->download('Official_Receipt_' . str_pad($transaction->id, 6, '0', STR_PAD_LEFT) . '.pdf');
+    }
 }

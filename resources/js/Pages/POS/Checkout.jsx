@@ -7,7 +7,7 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
     const [activeTab, setActiveTab] = useState('intakes'); // 'intakes' or 'history'
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [vehicleModel, setVehicleModel] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState('cash'); // cash, card, online
+    const [paymentMethod, setPaymentMethod] = useState('Cash'); // Cash, Card, GCash
     const [searchQuery, setSearchQuery] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -42,7 +42,16 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
                 alert('Out of stock!');
                 return prev;
             }
-            return [...prev, { id: item.id, type, name: item.name, price: Number(item.price), quantity: 1, originalItem: item }];
+            return [...prev, { 
+                id: item.id, 
+                type, 
+                name: item.name, 
+                price: Number(item.price), 
+                quantity: 1, 
+                originalItem: item,
+                additionalChargeDesc: '',
+                additionalChargeAmount: 0
+            }];
         });
     };
 
@@ -66,18 +75,30 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
         });
     };
 
-    const removeFromCart = (id, type) => {
-        setCart(prev => prev.filter(i => !(i.id === id && i.type === type)));
+    const updateAdditionalCharge = (id, type, desc, amount) => {
+        setCart(prev => prev.map(i => {
+            if (i.id === id && i.type === type) {
+                return { ...i, additionalChargeDesc: desc, additionalChargeAmount: Number(amount) || 0 };
+            }
+            return i;
+        }));
     };
 
-    const totalAmount = useMemo(() => cart.reduce((sum, item) => sum + (item.price * item.quantity), 0), [cart]);
+    const totalAmount = useMemo(() => cart.reduce((sum, item) => sum + (item.price * item.quantity) + (item.additionalChargeAmount || 0), 0), [cart]);
 
     const handleCheckout = () => {
         if (cart.length === 0) return alert('Cart is empty.');
         
         setIsProcessing(true);
         router.post(auth.user.role === 'admin' ? '/admin/pos/checkout' : '/pos/checkout', {
-            items: cart.map(i => ({ id: i.id, type: i.type, quantity: i.quantity, price: i.price })),
+            items: cart.map(i => ({ 
+                id: i.id, 
+                type: i.type, 
+                quantity: i.quantity, 
+                price: i.price,
+                additionalChargeDesc: i.additionalChargeDesc,
+                additionalChargeAmount: i.additionalChargeAmount
+            })),
             total_amount: totalAmount,
             payment_method: paymentMethod,
             customer_id: selectedCustomer || null,
@@ -137,17 +158,23 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
                     <div className="flex-1 overflow-y-auto p-6">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {activeTab === 'intakes' && filteredIntakes.map(intake => (
-                                <button 
-                                    key={intake.id} 
-                                    onClick={() => addToCart({ ...intake, name: 'Job: ' + intake.reference_number, price: intake.amount_to_pay || 0 }, 'intake')}
-                                    className="flex flex-col text-left bg-[#111] border border-[#1f1f1f] p-4 rounded-2xl hover:border-[#f97316] hover:bg-[#1a1a1a] transition-all group relative overflow-hidden"
-                                >
-                                    <div className="absolute top-0 right-0 px-2 py-1 bg-orange-500/10 text-orange-500 text-[10px] font-black rounded-bl-lg">REPAIR JOB</div>
-                                    <span className="text-xs font-bold text-[#6b7280] mb-1">{intake.reference_number}</span>
-                                    <span className="text-sm font-bold text-white mb-2">{intake.customer}</span>
-                                    <span className="text-xs text-[#9ca3af] mb-3 flex-1">{intake.vehicle}</span>
-                                    <span className="text-[#f97316] font-black text-lg">₱{Number(intake.amount_to_pay || 0).toLocaleString()}</span>
-                                </button>
+                                <div key={intake.id} className="relative flex flex-col text-left bg-[#111] border border-[#1f1f1f] rounded-2xl overflow-hidden hover:border-[#f97316] transition-all group">
+                                    <button 
+                                        onClick={() => addToCart({ ...intake, name: 'Job: ' + intake.reference_number, price: intake.amount_to_pay || 0 }, 'intake')}
+                                        className="flex-1 p-4 flex flex-col text-left hover:bg-[#1a1a1a]"
+                                    >
+                                        <div className="absolute top-0 right-0 px-2 py-1 bg-orange-500/10 text-orange-500 text-[10px] font-black rounded-bl-lg">REPAIR JOB</div>
+                                        <span className="text-xs font-bold text-[#6b7280] mb-1">{intake.reference_number}</span>
+                                        <span className="text-sm font-bold text-white mb-2">{intake.customer}</span>
+                                        <span className="text-xs text-[#9ca3af] mb-3 flex-1">{intake.vehicle}</span>
+                                        <span className="text-[#f97316] font-black text-lg">₱{Number(intake.amount_to_pay || 0).toLocaleString()}</span>
+                                    </button>
+                                    <div className="p-2 border-t border-[#1f1f1f] bg-[#0a0a0a]">
+                                        <a href={`/admin/intakes/${intake.id}/repair-order`} target="_blank" rel="noreferrer" className="w-full text-center block text-xs font-bold text-[#3b82f6] hover:text-[#60a5fa] py-1">
+                                            🖨️ Print Repair Order
+                                        </a>
+                                    </div>
+                                </div>
                             ))}
 
                             {activeTab === 'history' && (
@@ -238,6 +265,29 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
                                         </div>
                                         <span className="text-sm font-bold text-white">₱{(item.price * item.quantity).toLocaleString()}</span>
                                     </div>
+                                    
+                                    {/* Additional Charges Section for Intakes */}
+                                    {item.type === 'intake' && (
+                                        <div className="mt-3 pt-3 border-t border-[#2a2a2a]">
+                                            <p className="text-[10px] uppercase tracking-wider text-[#6b7280] mb-2">Additional Charges</p>
+                                            <div className="flex gap-2">
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Description (e.g., Extra oil)"
+                                                    value={item.additionalChargeDesc || ''}
+                                                    onChange={e => updateAdditionalCharge(item.id, item.type, e.target.value, item.additionalChargeAmount)}
+                                                    className="flex-1 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-[#f97316]"
+                                                />
+                                                <input 
+                                                    type="number" 
+                                                    placeholder="Amount (₱)"
+                                                    value={item.additionalChargeAmount || ''}
+                                                    onChange={e => updateAdditionalCharge(item.id, item.type, item.additionalChargeDesc, e.target.value)}
+                                                    className="w-24 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-[#f97316]"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}
@@ -254,7 +304,7 @@ export default function Checkout({ auth, transactions = [], intakes = [], custom
                         </div>
                         
                         <div className="grid grid-cols-3 gap-2 mb-6">
-                            {['cash', 'card', 'online'].map(method => (
+                            {['Cash', 'Card', 'GCash'].map(method => (
                                 <button 
                                     key={method}
                                     onClick={() => setPaymentMethod(method)}
