@@ -210,7 +210,8 @@ export default function IntakeForm({ auth }) {
             loose_items: finalLooseItems,
             damage_markers: markers,
             vehicle_type: vehicleType,
-            customer_signature: signatureData
+            customer_signature: signatureData,
+            estimate_id: selectedEstimateId
         });
     };
 

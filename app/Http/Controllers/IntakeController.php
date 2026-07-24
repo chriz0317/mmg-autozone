@@ -44,6 +44,7 @@ class IntakeController extends Controller
         // 2. Catch all the new frontend fields and save them to the database
         $intake = Intake::create([
             'reference_number' => $referenceNumber,
+            'estimate_id'      => $request->estimate_id,
             'customer'         => $request->customer,
             'email'            => $request->email,
             'address'          => $request->address,
