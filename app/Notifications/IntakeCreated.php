@@ -33,9 +33,11 @@ class IntakeCreated extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $name = $this->intake->customer ?? 'Customer';
+
         $mail = (new MailMessage)
                     ->subject("Job Order / Receipt - {$this->intake->reference_number} at MMG Autozone")
-                    ->greeting("Hello {$notifiable->name},")
+                    ->greeting("Hello {$name},")
                     ->line("Your vehicle ({$this->intake->vehicle}) has been successfully received at MMG Autozone.")
                     ->line("Reference Number: **{$this->intake->reference_number}**")
                     ->line("We have attached a digital copy of your Job Order / Receipt to this email for your records.")
