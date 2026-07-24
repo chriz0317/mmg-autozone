@@ -38,8 +38,8 @@ class ServiceRequestController extends Controller
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('service_requests', 'public');
-                $photoPaths[] = '/storage/' . $path;
+                $uploadedFileUrl = $photo->storeOnCloudinary('service_requests')->getSecurePath();
+                $photoPaths[] = $uploadedFileUrl;
             }
         }
 

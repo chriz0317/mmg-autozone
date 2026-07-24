@@ -128,8 +128,8 @@ class AdminController extends Controller
         $existing = $intake->progress_photos ?? [];
 
         foreach ($request->file('photos') as $photo) {
-            $path = $photo->store('progress_photos', 'public');
-            $existing[] = '/storage/' . $path;
+            $uploadedFileUrl = $photo->storeOnCloudinary('progress_photos')->getSecurePath();
+            $existing[] = $uploadedFileUrl;
         }
 
         $intake->update(['progress_photos' => $existing]);
