@@ -227,12 +227,6 @@ Route::middleware(['role:admin,admin'])->group(function () {
     Route::post('/admin/pos/checkout', [\App\Http\Controllers\POSController::class, 'checkout'])->name('admin.pos.checkout');
     Route::get('/admin/pos/success/{transaction}', [\App\Http\Controllers\TransactionController::class, 'success'])->name('admin.pos.success');
 
-    // Inventory Management (kept for POS / Services internal use)
-    Route::get('/admin/inventory', [\App\Http\Controllers\InventoryController::class, 'index'])->name('admin.inventory');
-    Route::post('/admin/inventory', [\App\Http\Controllers\InventoryController::class, 'store']);
-    Route::put('/admin/inventory/{inventoryItem}', [\App\Http\Controllers\InventoryController::class, 'update']);
-    Route::delete('/admin/inventory/{inventoryItem}', [\App\Http\Controllers\InventoryController::class, 'destroy']);
-
     // Unit In Tracker
     Route::get('/admin/unit-in', [\App\Http\Controllers\UnitInController::class, 'index'])->name('admin.unit-in');
     Route::post('/admin/intakes/{intake}/release', [\App\Http\Controllers\AdminController::class, 'releaseVehicle'])->name('admin.intakes.release');

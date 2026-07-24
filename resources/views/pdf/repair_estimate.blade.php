@@ -181,7 +181,7 @@
                     <td class="totals-value">{{ number_format($estimate->subtotal_parts, 2) }}</td>
                 </tr>
                 <tr>
-                    <td class="totals-label">LABOR/SHOP MATERIALS</td>
+                    <td class="totals-label">LABOR</td>
                     <td class="totals-value">{{ number_format($estimate->subtotal_labor, 2) }}</td>
                 </tr>
                 <tr>

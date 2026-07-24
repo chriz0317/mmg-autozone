@@ -241,7 +241,7 @@ export default function RepairEstimatesCreate({ intake }) {
                                 <span>{data.subtotal_parts.toLocaleString(undefined, {minimumFractionDigits:2})}</span>
                             </div>
                             <div className="flex justify-between text-gray-400">
-                                <span>LABOR / SHOP MATERIALS</span>
+                                <span>LABOR</span>
                                 <span>{data.subtotal_labor.toLocaleString(undefined, {minimumFractionDigits:2})}</span>
                             </div>
                             <div className="flex justify-between text-gray-400">

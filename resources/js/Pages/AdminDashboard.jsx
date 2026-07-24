@@ -295,15 +295,13 @@ export default function AdminDashboard({ auth, intakes = [], transactions = [], 
                                                     const fd = new FormData();
                                                     files.forEach(f => fd.append('photos[]', f));
                                                     fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
-                                                    fetch(`/admin/intakes/${selectedIntake.id}/progress-photos`, {
-                                                        method: 'POST',
-                                                        body: fd,
-                                                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
-                                                    }).then(r => {
-                                                        if (r.ok || r.redirected) {
+                                                    router.post(`/admin/intakes/${selectedIntake.id}/progress-photos`, fd, {
+                                                        preserveState: true,
+                                                        preserveScroll: true,
+                                                        onSuccess: () => {
                                                             alert(`${files.length} photo(s) uploaded successfully!`);
-                                                            router.reload({ only: ['intakes'] });
-                                                        } else {
+                                                        },
+                                                        onError: () => {
                                                             alert('Upload failed. Please try again.');
                                                         }
                                                     });

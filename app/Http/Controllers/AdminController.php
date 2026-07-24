@@ -143,6 +143,19 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Progress photos uploaded successfully.');
     }
 
+    public function markReady(Intake $intake)
+    {
+        $intake->update(['status' => 'Ready for Pickup']);
+
+        \App\Models\ActivityLog::create([
+            'user_id'     => \Illuminate\Support\Facades\Auth::id() ?? \Illuminate\Support\Facades\Auth::guard('admin')->id(),
+            'action'      => 'Vehicle Ready',
+            'description' => "Marked vehicle as Ready for Pickup for Intake {$intake->reference_number}",
+        ]);
+
+        return redirect()->back()->with('success', 'Vehicle marked as ready for pickup.');
+    }
+
     public function releaseVehicle(Intake $intake)
     {
         $intake->update(['status' => 'Released']);

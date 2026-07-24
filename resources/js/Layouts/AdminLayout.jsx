@@ -22,7 +22,7 @@ export default function AdminLayout({ children }) {
                 className={`flex flex-col transition-all duration-300 ease-in-out z-20 ${isSidebarOpen ? 'w-64' : 'w-20'} hidden md:flex shrink-0`} 
                 style={{ background: '#111111', borderRight: '1px solid #1f1f1f' }}
             >
-                <div className="p-4 text-center border-b flex items-center justify-center relative min-h-[105px]" style={{ borderColor: '#1f1f1f' }}>
+                <div className="p-4 text-center border-b flex items-center justify-center relative h-[105px] shrink-0" style={{ borderColor: '#1f1f1f' }}>
                     <div className={`transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100 w-full' : 'opacity-0 w-0 overflow-hidden absolute'}`}>
                         <img src="/images/bg2.png" alt="MMG Badge" className="w-12 h-12 object-cover rounded-full bg-white mx-auto mb-2" />
                         <h2 className="text-lg font-black tracking-widest text-white whitespace-nowrap">MMG AUTOZONE</h2>
@@ -106,7 +106,7 @@ export default function AdminLayout({ children }) {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 {/* Global Header */}
-                <header className="p-4 md:p-6 flex justify-between items-center shadow-sm shrink-0" style={{ background: '#111111', borderBottom: '1px solid #1f1f1f' }}>
+                <header className="px-4 md:px-6 h-[105px] flex justify-between items-center shadow-sm shrink-0" style={{ background: '#111111', borderBottom: '1px solid #1f1f1f' }}>
                     <div className="flex items-center gap-4">
                         <button onClick={toggleSidebar} className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-[#1a1a1a] hidden md:block">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -116,7 +116,6 @@ export default function AdminLayout({ children }) {
                             {isActive('/admin/services') && 'Service Requests'}
                             {isActive('/admin/repair-estimates') && 'Repair Estimates'}
                             {(isActive('/admin/pos') || isActive('/pos')) && 'Point of Sale'}
-                            {isActive('/admin/inventory') && 'Inventory Management'}
                             {isActive('/admin/unit-in') && 'Unit In — Workshop Tracker'}
                         </h1>
                     </div>
