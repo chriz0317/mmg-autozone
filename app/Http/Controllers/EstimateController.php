@@ -92,7 +92,7 @@ class EstimateController extends Controller
     public function update(Request $request, Estimate $estimate)
     {
         $request->validate([
-            'status' => 'required|in:Pending,Reviewed,Approved,Rejected',
+            'status' => 'required|in:Pending,Reviewed,Approved,unavailable',
             'estimated_cost' => 'nullable|numeric|min:0',
             'admin_remarks' => 'nullable|string',
         ]);

@@ -134,7 +134,7 @@ export default function EstimatesList({ auth, estimates }) {
                                             <option value="Pending">Pending</option>
                                             <option value="Reviewed">Reviewed (Need more info)</option>
                                             <option value="Approved">Approved (Ready for drop-off)</option>
-                                            <option value="Rejected">Rejected</option>
+                                            <option value="unavailable">Service Unavailable</option>
                                         </select>
                                     </div>
 

@@ -52,7 +52,7 @@ class ServiceRequestReviewed extends Notification implements ShouldQueue
                     ->line("Status: **$status**");
 
         if ($this->serviceRequest->estimated_cost) {
-            $mail->line("Estimated Cost: **₱$cost**");
+            $mail->line("Estimated Cost: **Php $cost**");
         }
 
         if ($this->serviceRequest->admin_remarks) {
