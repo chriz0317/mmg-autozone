@@ -120,7 +120,11 @@ export default function AdminLayout({ children }) {
                         </h1>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="text-xs md:text-sm font-bold uppercase tracking-widest px-4 py-2 rounded-full" style={{ background: 'rgba(249,115,22,0.1)', color: '#f97316', border: '1px solid rgba(249,115,22,0.3)' }}>
+                        <div 
+                            className="text-xs md:text-sm font-bold uppercase tracking-widest px-4 py-2 rounded-full truncate max-w-[150px] md:max-w-[250px] text-center" 
+                            style={{ background: 'rgba(249,115,22,0.1)', color: '#f97316', border: '1px solid rgba(249,115,22,0.3)' }}
+                            title={auth?.user?.name || 'Admin'}
+                        >
                             {auth?.user?.name || 'Admin'}
                         </div>
                     </div>

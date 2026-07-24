@@ -85,9 +85,9 @@ class RepairEstimateController extends Controller
             foreach ($request->items as $item) {
                 RepairEstimateItem::create([
                     'repair_estimate_id' => $estimate->id,
-                    'category' => $item['category'] ?? 'Parts',
+                    'category' => $item['qty'] ?? 1,
                     'description' => $item['description'] ?? '',
-                    'sub_text' => $item['sub_text'] ?? null,
+                    'sub_text' => $item['unit'] ?? 'pc',
                     'parts_cost' => $item['parts_cost'] ?? 0,
                     'labor_cost' => $item['labor_cost'] ?? 0,
                 ]);

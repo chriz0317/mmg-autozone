@@ -31,12 +31,14 @@ export default function RepairEstimatesCreate({ intake }) {
         net_due: 0
     });
 
-    const [newItem, setNewItem] = useState({ category: 'PARTS', description: '', sub_text: '', parts_cost: '', labor_cost: '' });
+    const [newItem, setNewItem] = useState({
+        qty: 1, description: '', unit: 'pc', parts_cost: '', labor_cost: ''
+    });
 
     const addItem = () => {
-        if (!newItem.description && !newItem.sub_text) return;
+        if (!newItem.description) return;
         setData('items', [...data.items, { ...newItem, parts_cost: Number(newItem.parts_cost) || 0, labor_cost: Number(newItem.labor_cost) || 0 }]);
-        setNewItem({ category: newItem.category, description: '', sub_text: '', parts_cost: '', labor_cost: '' });
+        setNewItem({ qty: 1, description: '', unit: 'pc', parts_cost: '', labor_cost: '' });
     };
 
     const removeItem = (index) => {
@@ -162,9 +164,9 @@ export default function RepairEstimatesCreate({ intake }) {
                         <table className="w-full text-left text-sm text-white">
                             <thead className="text-xs uppercase bg-[#1a1a1a] text-[#6b7280]">
                                 <tr>
-                                    <th className="p-3">Category</th>
+                                    <th className="p-3 text-center">Qty.</th>
+                                    <th className="p-3 text-center">Unit</th>
                                     <th className="p-3">Description</th>
-                                    <th className="p-3">Sub/Note</th>
                                     <th className="p-3 text-right">Parts Cost</th>
                                     <th className="p-3 text-right">Labor Cost</th>
                                     <th className="p-3"></th>
@@ -173,9 +175,9 @@ export default function RepairEstimatesCreate({ intake }) {
                             <tbody>
                                 {data.items.map((it, i) => (
                                     <tr key={i} className="border-b border-[#1f1f1f]">
-                                        <td className="p-3 font-bold text-gray-400">{it.category}</td>
-                                        <td className="p-3">{it.description}</td>
-                                        <td className="p-3 italic text-gray-400">{it.sub_text}</td>
+                                        <td className="p-3 text-center font-bold text-white">{it.qty}</td>
+                                        <td className="p-3 text-center font-bold text-[#6b7280]">{it.unit}</td>
+                                        <td className="p-3 font-bold">{it.description}</td>
                                         <td className="p-3 text-right text-orange-400">{Number(it.parts_cost) > 0 ? Number(it.parts_cost).toLocaleString() : ''}</td>
                                         <td className="p-3 text-right text-orange-400">{Number(it.labor_cost) > 0 ? Number(it.labor_cost).toLocaleString() : ''}</td>
                                         <td className="p-3 text-right">
@@ -184,18 +186,9 @@ export default function RepairEstimatesCreate({ intake }) {
                                     </tr>
                                 ))}
                                 <tr className="bg-[#1a1a1a]">
-                                    <td className="p-3">
-                                        <select value={newItem.category} onChange={e=>setNewItem({...newItem, category: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs">
-                                            <option>PARTS</option>
-                                            <option>BODY WORKS</option>
-                                            <option>MECHANICAL WORKS</option>
-                                            <option>AIRCON WORKS</option>
-                                            <option>PAINTING</option>
-                                            <option>OTHER</option>
-                                        </select>
-                                    </td>
+                                    <td className="p-3"><input type="number" min="1" value={newItem.qty} onChange={e=>setNewItem({...newItem, qty: e.target.value})} className="w-20 bg-[#2a2a2a] text-white p-2 rounded text-xs text-center mx-auto block" /></td>
+                                    <td className="p-3"><input type="text" placeholder="e.g. pc" value={newItem.unit} onChange={e=>setNewItem({...newItem, unit: e.target.value})} className="w-20 bg-[#2a2a2a] text-white p-2 rounded text-xs text-center mx-auto block" /></td>
                                     <td className="p-3"><input type="text" placeholder="e.g. HOOD PANEL" value={newItem.description} onChange={e=>setNewItem({...newItem, description: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs" /></td>
-                                    <td className="p-3"><input type="text" placeholder="e.g. GENUINE USED" value={newItem.sub_text} onChange={e=>setNewItem({...newItem, sub_text: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs" /></td>
                                     <td className="p-3"><input type="number" placeholder="0.00" value={newItem.parts_cost} onChange={e=>setNewItem({...newItem, parts_cost: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs text-right" /></td>
                                     <td className="p-3"><input type="number" placeholder="0.00" value={newItem.labor_cost} onChange={e=>setNewItem({...newItem, labor_cost: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs text-right" /></td>
                                     <td className="p-3 text-right"><button type="button" onClick={addItem} className="px-3 py-2 bg-green-600 rounded text-xs font-black text-white hover:bg-green-500">ADD</button></td>

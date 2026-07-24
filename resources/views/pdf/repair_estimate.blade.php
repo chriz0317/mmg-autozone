@@ -101,71 +101,31 @@
         <table class="items-table" cellspacing="0">
             <thead>
                 <tr>
-                    <th style="width: 70%;">DESCRIPTION</th>
-                    <th class="cost-col">PARTS</th>
-                    <th class="cost-col">LABOR</th>
+                    <th style="width: 5%; text-align: center;">NO.</th>
+                    <th style="width: 10%; text-align: center;">QTY.</th>
+                    <th style="width: 10%; text-align: center;">UNIT</th>
+                    <th style="width: 45%;">DESCRIPTION</th>
+                    <th class="cost-col">AMOUNT (PARTS)</th>
+                    <th class="cost-col">AMOUNT (LABOR)</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $groupedItems = $estimate->items->groupBy('category');
-                @endphp
-
-                <!-- PARTS SECTION -->
-                @if($groupedItems->has('PARTS') || $groupedItems->has('Parts'))
+                @foreach($estimate->items as $index => $item)
                     <tr>
-                        <td class="category-title" colspan="3">PARTS:</td>
+                        <td style="text-align: center;">{{ $index + 1 }}</td>
+                        <td style="text-align: center;">{{ $item->qty }}</td>
+                        <td style="text-align: center;">{{ strtoupper($item->unit) }}</td>
+                        <td>{{ strtoupper($item->description) }}</td>
+                        <td class="cost-col">{{ $item->parts_cost > 0 ? number_format($item->parts_cost, 2) : '' }}</td>
+                        <td class="cost-col">{{ $item->labor_cost > 0 ? number_format($item->labor_cost, 2) : '' }}</td>
                     </tr>
-                    @foreach($groupedItems->get('PARTS') ?? $groupedItems->get('Parts') as $item)
-                        <tr>
-                            <td>
-                                {{ strtoupper($item->description) }}
-                                @if($item->sub_text)
-                                    <span style="display:inline-block; margin-left: 20px;" class="sub-text">{{ strtoupper($item->sub_text) }}</span>
-                                @endif
-                            </td>
-                            <td class="cost-col">{{ $item->parts_cost > 0 ? number_format($item->parts_cost, 2) : '' }}</td>
-                            <td class="cost-col">{{ $item->labor_cost > 0 ? number_format($item->labor_cost, 2) : '' }}</td>
-                        </tr>
-                    @endforeach
-                @endif
-
-                <!-- SCOPE OF WORK -->
-                <tr>
-                    <td class="category-title" colspan="3">SCOPE OF WORK:</td>
-                </tr>
-                @foreach($groupedItems as $category => $items)
-                    @if(strtoupper($category) !== 'PARTS')
-                        <tr>
-                            <td style="padding-top: 8px;"><u>{{ strtoupper($category) }}:</u></td>
-                            <td class="cost-col"></td>
-                            <td class="cost-col" style="vertical-align: top;">
-                                @php
-                                    $catLabor = $items->sum('labor_cost');
-                                @endphp
-                                {{ $catLabor > 0 ? number_format($catLabor, 2) : '' }}
-                            </td>
-                        </tr>
-                        @foreach($items as $item)
-                            <tr>
-                                <td>
-                                    {{ strtoupper($item->description) }}
-                                    @if($item->sub_text)
-                                        <br><span class="sub-text">{{ nl2br(e(strtoupper($item->sub_text))) }}</span>
-                                    @endif
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        @endforeach
-                    @endif
                 @endforeach
                 
-                <tr><td colspan="3" style="text-align: center; padding: 20px 0;">**Nothing Follows**</td></tr>
+                <tr><td colspan="6" style="text-align: center; padding: 20px 0;">**Nothing Follows**</td></tr>
                 <tr class="bottom-border">
-                    <td style="text-align: right; padding-right: 20px;">Subtotals</td>
-                    <td class="cost-col">{{ number_format($estimate->subtotal_parts, 2) }}</td>
-                    <td class="cost-col">{{ number_format($estimate->subtotal_labor, 2) }}</td>
+                    <td colspan="4" style="text-align: right; padding-right: 20px; font-weight: bold;">Subtotals</td>
+                    <td class="cost-col font-bold">{{ number_format($estimate->subtotal_parts, 2) }}</td>
+                    <td class="cost-col font-bold">{{ number_format($estimate->subtotal_labor, 2) }}</td>
                 </tr>
             </tbody>
         </table>

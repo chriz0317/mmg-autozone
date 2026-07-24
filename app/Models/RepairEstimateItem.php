@@ -15,4 +15,14 @@ class RepairEstimateItem extends Model
     {
         return $this->belongsTo(RepairEstimate::class, 'repair_estimate_id');
     }
+
+    public function getQtyAttribute()
+    {
+        return $this->category;
+    }
+
+    public function getUnitAttribute()
+    {
+        return $this->sub_text;
+    }
 }

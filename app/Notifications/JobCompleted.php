@@ -39,7 +39,7 @@ class JobCompleted extends Notification implements ShouldQueue
     {
         return (new MailMessage)
                     ->subject("Vehicle Ready for Pickup - MMG Autozone")
-                    ->greeting("Hello {$notifiable->name},")
+                    ->greeting("Hello {$this->intake->customer},")
                     ->line("Great news! The repair/service for your {$this->intake->vehicle} (Ref: {$this->intake->reference_number}) has been completed.")
                     ->line("Your vehicle is now ready for pickup at our shop.")
                     ->line("If you haven't settled your balance yet, you may do so at the shop upon pickup.")
