@@ -128,10 +128,8 @@ class AdminController extends Controller
         $existing = $intake->progress_photos ?? [];
 
         foreach ($request->file('photos') as $photo) {
-            $uploadedFileUrl = cloudinary()->upload($photo->getRealPath(), [
-                'folder' => 'progress_photos'
-            ])->getSecurePath();
-            $existing[] = $uploadedFileUrl;
+            $path = $photo->store('progress_photos', 'cloudinary');
+            $existing[] = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
         }
 
         $intake->update(['progress_photos' => $existing]);
