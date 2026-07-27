@@ -33,11 +33,10 @@ export default function Checkout({ auth, transactions = [], estimates = [], cust
             // Walk-in selected -> only show Walk-In estimates
             return e.source === 'Walk-In';
         } else {
-            // Online customer selected -> only show Online estimates matching this customer's name
+            // Specific customer selected -> show estimates matching this customer's name (whether they were Walk-In or Online)
             const customerObj = customers.find(c => c.id == selectedCustomer);
             if (customerObj) {
-                // Try to match the customer's name roughly, as it might have been typed slightly differently in the estimate
-                return e.source === 'Online' && (e.customer_name || '').toLowerCase().includes(customerObj.name.toLowerCase());
+                return (e.customer_name || '').toLowerCase().includes(customerObj.name.toLowerCase());
             }
             return e.source === 'Online';
         }
