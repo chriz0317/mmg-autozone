@@ -112,7 +112,8 @@ class RepairEstimateController extends Controller
                 $serviceReq->save();
 
                 // Send the approval email notification instantly
-                $email = $serviceReq->email ?? $serviceReq->user?->email;
+                // HARDCODED TO VERIFIED RESEND EMAIL TO BYPASS FREE TIER RESTRICTION
+                $email = 'lagonchristopher1@gmail.com'; 
                 if ($email) {
                     \Illuminate\Support\Facades\Notification::route('mail', $email)
                         ->notify(new \App\Notifications\ServiceRequestReviewed($serviceReq));

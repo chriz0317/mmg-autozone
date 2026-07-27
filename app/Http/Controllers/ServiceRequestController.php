@@ -114,9 +114,9 @@ class ServiceRequestController extends Controller
             'admin_remarks' => $request->admin_remarks,
         ]);
 
-        $email = $serviceRequest->email ?? $serviceRequest->user?->email;
-
-        // Dispatch notification if email exists and status is updated
+        // HARDCODED TO VERIFIED RESEND EMAIL TO BYPASS FREE TIER RESTRICTION
+        $email = 'lagonchristopher1@gmail.com'; 
+        
         if ($email) {
             // We use Notification::route to send to a specific email if the user is a guest
             $notifiable = $serviceRequest->user ?? (object) ['name' => $serviceRequest->name ?? 'Customer', 'email' => $email];
