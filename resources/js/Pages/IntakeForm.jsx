@@ -85,7 +85,8 @@ export default function IntakeForm({ auth }) {
                             address: est.user?.address || prev.address,
                             vehicle: est.vehicle_model || prev.vehicle,
                             plate_no: est.plate_no || prev.plate_no,
-                            scope_of_works: est.issue_description || (est.service_type ? est.service_type.replace('_', ' ') : prev.scope_of_works)
+                            scope_of_works: est.issue_description || (est.service_type ? est.service_type.replace('_', ' ') : prev.scope_of_works),
+                            source: 'Online'
                         }));
                         setEstimatePhotos(est.photos || []);
                     }
@@ -111,7 +112,8 @@ export default function IntakeForm({ auth }) {
                 address: est.user?.address || prev.address,
                 vehicle: est.vehicle_model || prev.vehicle,
                 plate_no: est.plate_no || prev.plate_no,
-                scope_of_works: est.issue_description || prev.scope_of_works
+                scope_of_works: est.issue_description || prev.scope_of_works,
+                source: 'Online'
             }));
             setEstimatePhotos(est.photos || []);
         }
@@ -275,6 +277,32 @@ export default function IntakeForm({ auth }) {
                                 </option>
                             ))}
                         </select>
+                    <div className="flex items-center gap-4 border-b pb-4 mb-4" style={{ borderColor: '#1f1f1f' }}>
+                        <label className="text-sm font-bold whitespace-nowrap" style={{ color: '#9ca3af' }}>Transaction Source:</label>
+                        <div className="flex gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    name="source" 
+                                    value="Walk-In" 
+                                    checked={customerInfo.source === 'Walk-In' || !customerInfo.source} 
+                                    onChange={e => setCustomerInfo({...customerInfo, source: e.target.value})}
+                                    className="accent-orange-500"
+                                />
+                                <span className="text-sm text-white">Walk-In</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    name="source" 
+                                    value="Online" 
+                                    checked={customerInfo.source === 'Online'} 
+                                    onChange={e => setCustomerInfo({...customerInfo, source: e.target.value})}
+                                    className="accent-orange-500"
+                                />
+                                <span className="text-sm text-white">Online (Service Request)</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">

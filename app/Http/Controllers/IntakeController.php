@@ -66,17 +66,12 @@ class IntakeController extends Controller
             'damage_markers'   => $request->damage_markers,
             'customer_signature'=> $request->customer_signature,
             'vehicle_type'     => $request->vehicle_type,
+            'source'           => $request->source ?? 'Walk-In',
             'status'           => 'Pending',
         ]);
 
-        // Dispatch notification if email exists
-        if ($request->email) {
-            $notifiable = (object) ['name' => $intake->customer ?? 'Customer', 'email' => $request->email];
-            
-            \Illuminate\Support\Facades\Notification::route('mail', $request->email)
-                ->notify(new \App\Notifications\IntakeCreated($intake));
-        }
-
+        // Email notification logic has been moved to web.php to trigger on QR code scan
+        
         // 3. Send the user straight to the receipt/PDF generation page
         return redirect('/success/' . $intake->reference_number);
     }

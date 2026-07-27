@@ -140,6 +140,7 @@ export default function UnitIn({ intakes, flash }) {
                                 <tr className="text-xs uppercase tracking-widest border-b text-[#6b7280]"
                                     style={{ background: '#0a0a0a', borderColor: '#1f1f1f' }}>
                                     <th className="p-4 font-black">Reference</th>
+                                    <th className="p-4 font-black">Source</th>
                                     <th className="p-4 font-black">Customer</th>
                                     <th className="p-4 font-black">Vehicle</th>
                                     <th className="p-4 font-black">Check-in Date</th>
@@ -184,6 +185,13 @@ export default function UnitIn({ intakes, flash }) {
                                                         style={{ color: '#f97316' }}>
                                                         {intake.reference_number}
                                                     </a>
+                                                </td>
+
+                                                {/* Source */}
+                                                <td className="p-4">
+                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${intake.source === 'Online' ? 'bg-blue-900 text-blue-200' : 'bg-green-900 text-green-200'}`}>
+                                                        {intake.source === 'Online' ? 'ONLINE' : 'WALK-IN'}
+                                                    </span>
                                                 </td>
 
                                                 {/* Customer */}

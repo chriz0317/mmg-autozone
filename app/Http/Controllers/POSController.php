@@ -57,6 +57,10 @@ class POSController extends Controller
                     $estimate = \App\Models\RepairEstimate::findOrFail($item['id']);
                     $itemName = "Repair Quote: " . $estimate->estimate_no;
                     
+                    // Inherit the source (Online vs Walk-In) from the Estimate
+                    $transaction->source = $estimate->source;
+                    $transaction->save();
+                    
                     if ($estimate->intake_id) {
                         $intake = \App\Models\Intake::find($estimate->intake_id);
                         if ($intake) {

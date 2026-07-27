@@ -75,6 +75,7 @@ export default function RepairEstimatesIndex({ estimates, intakes = [] }) {
                                 <thead className="text-xs uppercase bg-[#1a1a1a] text-[#6b7280]">
                                     <tr>
                                         <th className="p-4 font-black tracking-widest">Est. No</th>
+                                        <th className="p-4 font-black tracking-widest">Source</th>
                                         <th className="p-4 font-black tracking-widest">Customer</th>
                                         <th className="p-4 font-black tracking-widest">Vehicle</th>
                                         <th className="p-4 font-black tracking-widest text-right">Net Due (₱)</th>
@@ -93,6 +94,11 @@ export default function RepairEstimatesIndex({ estimates, intakes = [] }) {
                                         estimates.map((est) => (
                                             <tr key={est.id} className="border-b border-[#1f1f1f] hover:bg-[#1a1a1a] transition-colors">
                                                 <td className="p-4 font-bold text-white">#{est.estimate_no}</td>
+                                                <td className="p-4">
+                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${est.source === 'Online' ? 'bg-blue-900 text-blue-200' : 'bg-green-900 text-green-200'}`}>
+                                                        {est.source === 'Online' ? 'ONLINE' : 'WALK-IN'}
+                                                    </span>
+                                                </td>
                                                 <td className="p-4">{est.customer_name}</td>
                                                 <td className="p-4">{est.vehicle_model} {est.plate_no && `(${est.plate_no})`}</td>
                                                 <td className="p-4 text-right font-black text-orange-400">

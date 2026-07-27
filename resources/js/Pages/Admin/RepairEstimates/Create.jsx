@@ -24,6 +24,7 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
         color: '',
         frame_no: '',
         date: new Date().toISOString().split('T')[0],
+        source: serviceRequest ? 'Online' : 'Walk-In',
         
         items: [],
         
@@ -111,7 +112,19 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
                 {/* Headers */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl p-6 space-y-4 shadow-xl">
-                        <h3 className="text-sm font-black tracking-widest uppercase text-orange-500 mb-4 border-b border-[#2a2a2a] pb-2">Customer Details</h3>
+                        <div className="flex justify-between items-center mb-4 border-b border-[#2a2a2a] pb-2">
+                            <h3 className="text-sm font-black tracking-widest uppercase text-orange-500">Customer Details</h3>
+                            <div className="flex gap-4">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="source" value="Walk-In" checked={data.source === 'Walk-In'} onChange={e => setData('source', e.target.value)} className="accent-orange-500" />
+                                    <span className="text-xs text-[#9ca3af] font-bold">Walk-In</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="source" value="Online" checked={data.source === 'Online'} onChange={e => setData('source', e.target.value)} className="accent-orange-500" />
+                                    <span className="text-xs text-[#9ca3af] font-bold">Online</span>
+                                </label>
+                            </div>
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="col-span-2">
                                 <label className="block text-xs font-bold text-[#9ca3af] mb-1">Customer Name *</label>

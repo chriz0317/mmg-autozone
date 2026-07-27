@@ -85,6 +85,7 @@ class RepairEstimateController extends Controller
             'discount_notes' => $request->discount_notes,
             
             'net_due' => $request->net_due ?? 0,
+            'source' => $request->source ?? 'Walk-In',
             'status' => 'Pending Approval',
         ]);
 

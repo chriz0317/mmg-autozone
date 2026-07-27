@@ -39,6 +39,24 @@ Route::get('/success/{reference_number}', function ($reference_number) {
 Route::get('/receipt/{reference_number}', function ($reference_number) {
     $intake = Intake::where('reference_number', $reference_number)->firstOrFail();
 
+    // Trigger the automated email ONLY when the customer scans the QR code
+    // We use Cache to ensure we only send this email once per intake to prevent spam
+    $cacheKey = 'intake_email_sent_' . $intake->id;
+    if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+        // Only send if the intake actually has a customer email attached
+        if ($intake->email) {
+            // HARDCODED TO VERIFIED RESEND EMAIL TO BYPASS FREE TIER RESTRICTION
+            $overrideEmail = 'lagonchristopher1@gmail.com'; 
+            $notifiable = (object) ['name' => $intake->customer ?? 'Customer', 'email' => $overrideEmail];
+            
+            \Illuminate\Support\Facades\Notification::route('mail', $overrideEmail)
+                ->notify(new \App\Notifications\IntakeCreated($intake));
+        }
+        
+        // Mark as sent so they don't get an email every time they refresh the page
+        \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addDays(30));
+    }
+
     return Inertia::render('Receipt', [
         'intake' => $intake,
     ]);
