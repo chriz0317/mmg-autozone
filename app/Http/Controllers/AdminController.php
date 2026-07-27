@@ -67,8 +67,9 @@ class AdminController extends Controller
 
         // Dispatch Email Notification
         if ($intake->email) {
-            $notifiable = (object) ['name' => $intake->customer ?? 'Customer', 'email' => $intake->email];
-            \Illuminate\Support\Facades\Notification::route('mail', $intake->email)
+            // HARDCODED TO VERIFIED RESEND EMAIL TO BYPASS FREE TIER RESTRICTION
+            $overrideEmail = 'lagonchristopher1@gmail.com'; 
+            \Illuminate\Support\Facades\Notification::route('mail', $overrideEmail)
                 ->notify(new \App\Notifications\JobCompleted($intake));
         }
 
