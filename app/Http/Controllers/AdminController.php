@@ -154,6 +154,14 @@ class AdminController extends Controller
             'description' => "Released vehicle for Intake {$intake->reference_number} — {$intake->customer} ({$intake->vehicle})",
         ]);
 
+        // Dispatch Email Notification
+        if ($intake->email) {
+            // HARDCODED TO VERIFIED RESEND EMAIL TO BYPASS FREE TIER RESTRICTION
+            $overrideEmail = 'lagonchristopher1@gmail.com'; 
+            \Illuminate\Support\Facades\Notification::route('mail', $overrideEmail)
+                ->notify(new \App\Notifications\VehicleReleased($intake));
+        }
+
         return redirect()->back()->with('success', "Vehicle {$intake->reference_number} has been released.");
     }
 }
