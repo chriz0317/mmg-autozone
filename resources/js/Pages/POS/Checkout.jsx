@@ -23,7 +23,25 @@ export default function Checkout({ auth, transactions = [], estimates = [], cust
         (t.user?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.id.toString().includes(searchQuery)
     );
-    const filteredEstimates = estimates.filter(e => (e.estimate_no + e.customer_name).toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredEstimates = estimates.filter(e => {
+        // First filter by search query
+        const matchesSearch = (e.estimate_no + e.customer_name).toLowerCase().includes(searchQuery.toLowerCase());
+        if (!matchesSearch) return false;
+
+        // Then filter by Walk-In vs Online customer selection
+        if (!selectedCustomer) {
+            // Walk-in selected -> only show Walk-In estimates
+            return e.source === 'Walk-In';
+        } else {
+            // Online customer selected -> only show Online estimates matching this customer's name
+            const customerObj = customers.find(c => c.id == selectedCustomer);
+            if (customerObj) {
+                // Try to match the customer's name roughly, as it might have been typed slightly differently in the estimate
+                return e.source === 'Online' && (e.customer_name || '').toLowerCase().includes(customerObj.name.toLowerCase());
+            }
+            return e.source === 'Online';
+        }
+    });
 
     // Add to cart function
     const addToCart = (item, type) => {
