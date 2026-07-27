@@ -2,18 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-export default function RepairEstimatesCreate({ intake }) {
+export default function RepairEstimatesCreate({ intake, serviceRequest }) {
+    const customer = intake?.customer || serviceRequest?.name || serviceRequest?.user?.name || '';
+    const contact = intake?.contact_no || serviceRequest?.contact_no || serviceRequest?.user?.contact_no || '';
+    const ref = intake?.reference_number || (serviceRequest ? `SR-${serviceRequest.id}` : '');
+    const vehicle = intake?.vehicle || serviceRequest?.vehicle_model || '';
+    const plate = intake?.plate_no || serviceRequest?.plate_no || '';
+
     const { data, setData, post, processing, errors } = useForm({
         intake_id: intake?.id || null,
-        customer_name: intake?.customer || '',
+        service_request_id: serviceRequest?.id || null,
+        customer_name: customer,
         address: '',
-        contact_no: intake?.contact_no || '',
+        contact_no: contact,
         insurance: '',
-        reference_no: intake?.reference_number || '',
+        reference_no: ref,
         days_of_repair: '10 WORKING DAYS',
         prepared_by: '',
-        vehicle_model: intake?.vehicle || '',
-        plate_no: intake?.plate_no || '',
+        vehicle_model: vehicle,
+        plate_no: plate,
         color: '',
         frame_no: '',
         date: new Date().toISOString().split('T')[0],

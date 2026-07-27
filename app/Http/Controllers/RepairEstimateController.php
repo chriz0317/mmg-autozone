@@ -32,8 +32,15 @@ class RepairEstimateController extends Controller
         if ($request->has('intake_id')) {
             $intake = \App\Models\Intake::find($request->intake_id);
         }
+
+        $serviceRequest = null;
+        if ($request->has('service_request_id')) {
+            $serviceRequest = \App\Models\ServiceRequest::with('user')->find($request->service_request_id);
+        }
+
         return Inertia::render('Admin/RepairEstimates/Create', [
-            'intake' => $intake
+            'intake' => $intake,
+            'serviceRequest' => $serviceRequest
         ]);
     }
 
@@ -50,6 +57,7 @@ class RepairEstimateController extends Controller
 
         $estimate = RepairEstimate::create([
             'intake_id' => $request->intake_id,
+            'service_request_id' => $request->service_request_id,
             'estimate_no' => $estimateNo,
             'customer_name' => $request->customer_name,
             'address' => $request->address,
@@ -91,6 +99,26 @@ class RepairEstimateController extends Controller
                     'parts_cost' => $item['parts_cost'] ?? 0,
                     'labor_cost' => $item['labor_cost'] ?? 0,
                 ]);
+            }
+        }
+
+        // Auto-Approve the ServiceRequest if this estimate was built from one
+        if ($request->has('service_request_id') && $request->service_request_id) {
+            $serviceReq = \App\Models\ServiceRequest::with('user')->find($request->service_request_id);
+            if ($serviceReq) {
+                $serviceReq->estimated_cost = $estimate->net_due;
+                $serviceReq->status = 'Approved';
+                // You can add admin_remarks to the request if needed, or leave it blank
+                $serviceReq->save();
+
+                // Send the approval email notification instantly
+                $email = $serviceReq->email ?? $serviceReq->user?->email;
+                if ($email) {
+                    \Illuminate\Support\Facades\Notification::route('mail', $email)
+                        ->notify(new \App\Notifications\ServiceRequestReviewed($serviceReq));
+                }
+                
+                return redirect()->route('admin.services.index')->with('success', 'Quotation built and Service Request Approved! Customer has been notified.');
             }
         }
 

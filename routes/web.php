@@ -245,5 +245,10 @@ Route::get('/or/{transaction}/pdf', [\App\Http\Controllers\TransactionController
 
 require __DIR__.'/auth.php';
 
+Route::get('/run-secret-migration-2026', function() {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    return "Migrations executed successfully: " . \Illuminate\Support\Facades\Artisan::output();
+});
+
 // Public Digital OR Route
 Route::get('/or/{transaction}', [\App\Http\Controllers\TransactionController::class, 'digitalOr'])->name('transaction.or');

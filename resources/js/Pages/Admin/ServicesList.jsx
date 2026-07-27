@@ -210,40 +210,43 @@ export default function ServicesList({ auth, serviceRequests }) {
                                         </select>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-[#9ca3af] mb-1">Baseline Cost Estimate (₱)</label>
-                                        <input 
-                                            type="number" 
-                                            step="0.01"
-                                            value={data.estimated_cost} 
-                                            onChange={e => setData('estimated_cost', e.target.value)}
-                                            placeholder="e.g. 15000.00"
-                                            className="w-full px-3 py-2 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-sm text-white outline-none focus:border-[#f97316]"
-                                        />
-                                        <p className="text-[10px] text-orange-400 mt-1 font-semibold leading-tight">
-                                            ⚠️ Note: Estimates given based on photos are NOT final. The actual cost may vary upon physical inspection. Leave empty if you cannot determine the cost yet.
-                                        </p>
-                                    </div>
+                                    {data.status !== 'Approved' && (
+                                        <div>
+                                            <label className="block text-xs font-bold text-[#9ca3af] mb-1">Shop Remarks to Customer</label>
+                                            <textarea 
+                                                rows="4"
+                                                value={data.admin_remarks} 
+                                                onChange={e => setData('admin_remarks', e.target.value)}
+                                                placeholder="Provide reason for rejection or need for more info..."
+                                                className="w-full px-3 py-2 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-sm text-white outline-none focus:border-[#f97316] resize-none"
+                                            ></textarea>
+                                        </div>
+                                    )}
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-[#9ca3af] mb-1">Shop Remarks to Customer</label>
-                                        <textarea 
-                                            rows="4"
-                                            value={data.admin_remarks} 
-                                            onChange={e => setData('admin_remarks', e.target.value)}
-                                            placeholder="Please bring your car on Monday..."
-                                            className="w-full px-3 py-2 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-sm text-white outline-none focus:border-[#f97316] resize-none"
-                                        ></textarea>
-                                    </div>
-
-                                    <div className="pt-4 border-t border-[#1f1f1f] flex justify-end gap-3">
-                                        <button type="button" onClick={() => setSelectedRequest(null)} className="px-4 py-2 text-sm font-bold text-[#9ca3af] hover:text-white">
-                                            Cancel
-                                        </button>
-                                        <button type="submit" disabled={processing} className="px-6 py-2 rounded-lg text-sm font-black text-white bg-[#f97316] hover:bg-[#ea580c] transition-colors disabled:opacity-50">
-                                            {processing ? 'Saving...' : 'Save & Notify'}
-                                        </button>
-                                    </div>
+                                    {data.status === 'Approved' ? (
+                                        <div className="bg-[#1a1a1a] p-5 rounded-lg border border-[#f97316]/30 flex flex-col items-center justify-center text-center mt-4">
+                                            <p className="text-sm font-bold text-white mb-2">Formal Quotation Required</p>
+                                            <p className="text-xs text-[#9ca3af] mb-4 max-w-sm">
+                                                To approve this request, you must build an itemized quotation (Parts & Labor). When you save the quotation, this request will be automatically approved and the customer will be notified!
+                                            </p>
+                                            <a 
+                                                href={`/admin/repair-estimates/create?service_request_id=${selectedRequest.id}`}
+                                                className="px-6 py-3 rounded-lg text-sm font-black text-white bg-[#f97316] hover:bg-[#ea580c] shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all flex items-center gap-2"
+                                            >
+                                                <span>📝 Build Itemized Quotation</span>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                            </a>
+                                        </div>
+                                    ) : (
+                                        <div className="pt-4 border-t border-[#1f1f1f] flex justify-end gap-3 mt-4">
+                                            <button type="button" onClick={() => setSelectedRequest(null)} className="px-4 py-2 text-sm font-bold text-[#9ca3af] hover:text-white">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" disabled={processing} className="px-6 py-2 rounded-lg text-sm font-black text-white bg-[#3b82f6] hover:bg-[#2563eb] transition-colors disabled:opacity-50">
+                                                {processing ? 'Saving...' : 'Update Status & Notify'}
+                                            </button>
+                                        </div>
+                                    )}
                                 </form>
                                 {selectedRequest.status === 'Approved' && (
                                     <div className="mt-4">

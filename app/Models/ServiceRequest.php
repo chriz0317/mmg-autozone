@@ -49,4 +49,9 @@ class ServiceRequest extends Model
     {
         return $this->hasOne(Intake::class, 'estimate_id');
     }
+
+    public function repairEstimate()
+    {
+        return $this->hasOne(RepairEstimate::class, 'service_request_id');
+    }
 }

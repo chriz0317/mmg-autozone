@@ -20,6 +20,11 @@ class RepairEstimate extends Model
         return $this->belongsTo(Intake::class);
     }
 
+    public function serviceRequest()
+    {
+        return $this->belongsTo(ServiceRequest::class);
+    }
+
     public function items()
     {
         return $this->hasMany(RepairEstimateItem::class);
