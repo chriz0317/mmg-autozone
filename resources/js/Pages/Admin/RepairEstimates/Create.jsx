@@ -106,13 +106,6 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
                         <h2 className="text-3xl font-black text-white uppercase tracking-tight">Create Repair Estimate</h2>
                         <p className="text-[#9ca3af] mt-2">Build a formal quotation with parts, labor, and deductions.</p>
                     </div>
-                    <button 
-                        type="submit" 
-                        disabled={processing}
-                        className="px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-sm uppercase tracking-wider transition-colors disabled:opacity-50"
-                    >
-                        {processing ? 'Saving...' : 'Save Estimate'}
-                    </button>
                 </div>
 
                 {/* Headers */}
@@ -210,7 +203,28 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
                                 <tr className="bg-[#1a1a1a]">
                                     <td className="p-3"><input type="number" min="1" value={newItem.qty} onChange={e=>setNewItem({...newItem, qty: e.target.value})} className="w-20 bg-[#2a2a2a] text-white p-2 rounded text-xs text-center mx-auto block" /></td>
                                     <td className="p-3"><input type="text" placeholder="e.g. pc" value={newItem.unit} onChange={e=>setNewItem({...newItem, unit: e.target.value})} className="w-20 bg-[#2a2a2a] text-white p-2 rounded text-xs text-center mx-auto block" /></td>
-                                    <td className="p-3"><input type="text" placeholder="e.g. HOOD PANEL" value={newItem.description} onChange={e=>setNewItem({...newItem, description: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs" /></td>
+                                    <td className="p-3">
+                                        <input 
+                                            list="services-list"
+                                            placeholder="Select or type..." 
+                                            value={newItem.description} 
+                                            onChange={e=>setNewItem({...newItem, description: e.target.value})} 
+                                            className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs" 
+                                        />
+                                        <datalist id="services-list">
+                                            <option value="Wash Over (Sedan)" />
+                                            <option value="Wash Over (SUV)" />
+                                            <option value="Per Panel Repaint" />
+                                            <option value="Bumper Repair & Paint" />
+                                            <option value="Dent Pulling (PDR)" />
+                                            <option value="Underchassis Repair" />
+                                            <option value="Engine Overhaul" />
+                                            <option value="Change Oil" />
+                                            <option value="Brake Pad Replacement" />
+                                            <option value="Suspension Repair" />
+                                            <option value="Aircon Freon Recharge" />
+                                        </datalist>
+                                    </td>
                                     <td className="p-3"><input type="number" placeholder="0.00" value={newItem.parts_cost} onChange={e=>setNewItem({...newItem, parts_cost: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs text-right" /></td>
                                     <td className="p-3"><input type="number" placeholder="0.00" value={newItem.labor_cost} onChange={e=>setNewItem({...newItem, labor_cost: e.target.value})} className="w-full bg-[#2a2a2a] text-white p-2 rounded text-xs text-right" /></td>
                                     <td className="p-3 text-right"><button type="button" onClick={addItem} className="px-3 py-2 bg-green-600 rounded text-xs font-black text-white hover:bg-green-500">ADD</button></td>
@@ -294,6 +308,17 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Submit Button Section */}
+                <div className="flex justify-end pt-8 pb-4">
+                    <button 
+                        type="submit" 
+                        disabled={processing}
+                        className="px-10 py-4 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-lg uppercase tracking-wider shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all disabled:opacity-50"
+                    >
+                        {processing ? 'Saving...' : '💾 SAVE ESTIMATE'}
+                    </button>
                 </div>
             </form>
         </AdminLayout>
