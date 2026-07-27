@@ -277,6 +277,8 @@ export default function IntakeForm({ auth }) {
                                 </option>
                             ))}
                         </select>
+                    </div>
+
                     <div className="flex items-center gap-4 border-b pb-4 mb-4" style={{ borderColor: '#1f1f1f' }}>
                         <label className="text-sm font-bold whitespace-nowrap" style={{ color: '#9ca3af' }}>Transaction Source:</label>
                         <div className="flex gap-4">
