@@ -43,7 +43,10 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
     });
 
     const addItem = () => {
-        if (!newItem.description) return;
+        if (!newItem.description) {
+            alert('You must provide a description for the line item!');
+            return;
+        }
         setData('items', [...data.items, { ...newItem, parts_cost: Number(newItem.parts_cost) || 0, labor_cost: Number(newItem.labor_cost) || 0 }]);
         setNewItem({ qty: 1, description: '', unit: 'pc', parts_cost: '', labor_cost: '' });
     };
@@ -86,6 +89,18 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
     return (
         <AdminLayout>
             <form onSubmit={submit} className="max-w-6xl mx-auto space-y-6 pb-20">
+                
+                {Object.keys(errors).length > 0 && (
+                    <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-4 mb-6">
+                        <h3 className="text-red-500 font-bold mb-2">Please fix the following errors:</h3>
+                        <ul className="list-disc list-inside text-sm text-red-400">
+                            {Object.values(errors).map((err, i) => (
+                                <li key={i}>{err}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 <div className="flex justify-between items-end">
                     <div>
                         <h2 className="text-3xl font-black text-white uppercase tracking-tight">Create Repair Estimate</h2>
@@ -203,6 +218,9 @@ export default function RepairEstimatesCreate({ intake, serviceRequest }) {
                             </tbody>
                         </table>
                     </div>
+                    {errors.items && (
+                        <p className="text-red-500 text-xs font-bold mt-2">⚠️ You must add at least one line item to save this quotation!</p>
+                    )}
                 </div>
 
                 {/* Deductions and Totals */}

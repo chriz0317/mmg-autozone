@@ -250,5 +250,10 @@ Route::get('/run-secret-migration-2026', function() {
     return "Migrations executed successfully: " . \Illuminate\Support\Facades\Artisan::output();
 });
 
+Route::get('/clear-cache-now', function() {
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    return "Cache cleared successfully! Laravel will now read the new Render environment variables.";
+});
+
 // Public Digital OR Route
 Route::get('/or/{transaction}', [\App\Http\Controllers\TransactionController::class, 'digitalOr'])->name('transaction.or');
