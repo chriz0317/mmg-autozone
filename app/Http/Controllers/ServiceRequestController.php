@@ -60,7 +60,27 @@ class ServiceRequestController extends Controller
             'status' => 'Pending',
         ]);
 
+        // If this is a photo estimate, run AI analysis immediately
+        if ($serviceRequest->service_type === 'photo_estimate' && !empty($photoPaths)) {
+            try {
+                $aiController = new \App\Http\Controllers\AIEstimateController();
+                $aiResult = $aiController->runAnalysis($serviceRequest);
+                $serviceRequest->update([
+                    'ai_estimate'    => $aiResult,
+                    'ai_analyzed_at' => now(),
+                ]);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('AI Estimate auto-run failed: ' . $e->getMessage());
+                // Non-fatal — the request is still saved, AI just didn't run
+            }
+
+            // Redirect to the results page so the customer sees the estimate instantly
+            return redirect()->route('service_requests.show', $serviceRequest->id)
+                ->with('success', 'Your photos have been analyzed! Here is your preliminary estimate.');
+        }
+
         return redirect()->back()->with('success', 'Request submitted successfully.');
+
     }
 
     /**

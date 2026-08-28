@@ -34,6 +34,108 @@ export default function ServiceRequestDetails({ serviceRequest }) {
                     </div>
                 </div>
 
+                {/* ── AI ESTIMATE RESULTS PANEL ── */}
+                {serviceRequest.ai_estimate && (
+                    <div className="mb-8 rounded-2xl overflow-hidden border border-[#f97316]/40 shadow-[0_0_40px_rgba(249,115,22,0.08)]">
+                        {/* Header */}
+                        <div className="px-6 py-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #1a0f00 0%, #111111 100%)', borderBottom: '1px solid rgba(249,115,22,0.2)' }}>
+                            <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-xl bg-[#f97316]/10 border border-[#f97316]/30 flex items-center justify-center text-lg">🤖</div>
+                                <div>
+                                    <h3 className="text-sm font-black text-white tracking-widest uppercase">AI Damage Assessment</h3>
+                                    <p className="text-[10px] text-[#f97316] font-bold uppercase tracking-widest">
+                                        Powered by Gemini Vision · RAG-Enhanced with Shop History
+                                    </p>
+                                </div>
+                            </div>
+                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                                serviceRequest.ai_estimate.confidence === 'High' ? 'bg-green-500/10 text-green-400 border-green-500/30' :
+                                serviceRequest.ai_estimate.confidence === 'Medium' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' :
+                                'bg-red-500/10 text-red-400 border-red-500/30'
+                            }`}>
+                                {serviceRequest.ai_estimate.confidence || 'Medium'} Confidence
+                            </div>
+                        </div>
+
+                        <div className="p-6 space-y-6" style={{ background: '#0d0d0d' }}>
+                            {/* Damage Summary */}
+                            <div>
+                                <p className="text-xs font-black uppercase tracking-widest text-[#6b7280] mb-2">Damage Summary</p>
+                                <p className="text-sm text-[#d1d5db] leading-relaxed bg-[#111111] p-4 rounded-xl border border-[#1f1f1f]">
+                                    {serviceRequest.ai_estimate.damage_summary}
+                                </p>
+                            </div>
+
+                            {/* Line Items Table */}
+                            {serviceRequest.ai_estimate.suggested_items?.length > 0 && (
+                                <div>
+                                    <p className="text-xs font-black uppercase tracking-widest text-[#6b7280] mb-3">Suggested Repair Items</p>
+                                    <div className="rounded-xl overflow-hidden border border-[#1f1f1f]">
+                                        <table className="w-full text-left text-sm">
+                                            <thead>
+                                                <tr className="bg-[#111111] text-[10px] uppercase tracking-widest text-[#6b7280]">
+                                                    <th className="px-4 py-3 font-black">Description</th>
+                                                    <th className="px-4 py-3 font-black text-right">Parts (₱)</th>
+                                                    <th className="px-4 py-3 font-black text-right">Labor (₱)</th>
+                                                    <th className="px-4 py-3 font-black text-right">Subtotal (₱)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {serviceRequest.ai_estimate.suggested_items.map((item, i) => (
+                                                    <tr key={i} className="border-t border-[#1f1f1f] hover:bg-[#111111] transition-colors">
+                                                        <td className="px-4 py-3 text-white font-semibold">{item.description}</td>
+                                                        <td className="px-4 py-3 text-right text-[#9ca3af]">
+                                                            {item.parts_cost > 0 ? `₱${Number(item.parts_cost).toLocaleString('en-PH')}` : '—'}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right text-[#9ca3af]">
+                                                            {item.labor_cost > 0 ? `₱${Number(item.labor_cost).toLocaleString('en-PH')}` : '—'}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right font-black text-[#f97316]">
+                                                            ₱{Number(item.subtotal || (item.parts_cost + item.labor_cost)).toLocaleString('en-PH')}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Total Range */}
+                            {(serviceRequest.ai_estimate.total_min || serviceRequest.ai_estimate.total_max) && (
+                                <div className="flex items-center justify-between bg-[#111111] border border-[#f97316]/20 rounded-xl p-5">
+                                    <div>
+                                        <p className="text-xs font-black uppercase tracking-widest text-[#6b7280] mb-1">Estimated Total Range</p>
+                                        <p className="text-xs text-[#6b7280]">Subject to physical inspection</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-3xl font-black text-white">
+                                            ₱{Number(serviceRequest.ai_estimate.total_min).toLocaleString('en-PH')}
+                                            <span className="text-[#6b7280] text-xl"> – </span>
+                                            ₱{Number(serviceRequest.ai_estimate.total_max).toLocaleString('en-PH')}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Confidence Note */}
+                            {serviceRequest.ai_estimate.confidence_note && (
+                                <p className="text-xs text-[#6b7280] italic">
+                                    ⚡ {serviceRequest.ai_estimate.confidence_note}
+                                </p>
+                            )}
+
+                            {/* Non-binding disclaimer */}
+                            <div className="flex items-start gap-3 p-4 rounded-xl border-l-4 border-[#f97316] bg-[rgba(249,115,22,0.05)]">
+                                <span className="text-[#f97316] text-lg flex-shrink-0">⚠️</span>
+                                <p className="text-xs text-[#9ca3af] leading-relaxed">
+                                    <strong className="text-[#f97316]">Non-Binding Estimate.</strong> {serviceRequest.ai_estimate.disclaimer || 'This AI-generated estimate is preliminary and based on photo analysis only. Final costs will be confirmed after a physical inspection at MMG Autozone.'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {serviceRequest.status === 'Approved' && (
                     <div className="mb-8 p-6 rounded-2xl border border-[#10b981] bg-[rgba(16,185,129,0.05)]">
                         <h3 className="text-xl font-black text-[#10b981] mb-2">Request Approved!</h3>

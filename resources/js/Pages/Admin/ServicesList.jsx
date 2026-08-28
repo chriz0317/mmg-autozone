@@ -188,6 +188,50 @@ export default function ServicesList({ auth, serviceRequests }) {
                                         ) : (
                                             <p className="text-sm text-[#6b7280]">No photos provided.</p>
                                         )}
+
+                                        {/* AI Pre-Analysis Panel for Admin */}
+                                        {selectedRequest.ai_estimate && (
+                                            <div className="mt-4 rounded-xl overflow-hidden border border-[#f97316]/30">
+                                                <div className="px-4 py-3 flex items-center gap-2" style={{ background: 'linear-gradient(135deg, #1a0f00, #111111)', borderBottom: '1px solid rgba(249,115,22,0.2)' }}>
+                                                    <span className="text-sm">🤖</span>
+                                                    <p className="text-xs font-black text-[#f97316] uppercase tracking-widest">AI Pre-Analysis</p>
+                                                    <span className={`ml-auto px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                                                        selectedRequest.ai_estimate.confidence === 'High' ? 'bg-green-500/10 text-green-400 border-green-500/30' :
+                                                        selectedRequest.ai_estimate.confidence === 'Medium' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' :
+                                                        'bg-red-500/10 text-red-400 border-red-500/30'
+                                                    }`}>{selectedRequest.ai_estimate.confidence} Confidence</span>
+                                                </div>
+                                                <div className="p-4 space-y-3 bg-[#0d0d0d]">
+                                                    <p className="text-xs text-[#d1d5db] leading-relaxed">{selectedRequest.ai_estimate.damage_summary}</p>
+                                                    {selectedRequest.ai_estimate.suggested_items?.length > 0 && (
+                                                        <table className="w-full text-xs">
+                                                            <thead>
+                                                                <tr className="text-[#6b7280] border-b border-[#1f1f1f]">
+                                                                    <th className="py-1 text-left font-black">Item</th>
+                                                                    <th className="py-1 text-right font-black">Parts</th>
+                                                                    <th className="py-1 text-right font-black">Labor</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {selectedRequest.ai_estimate.suggested_items.map((item, i) => (
+                                                                    <tr key={i} className="border-b border-[#1f1f1f]">
+                                                                        <td className="py-1.5 text-white">{item.description}</td>
+                                                                        <td className="py-1.5 text-right text-[#9ca3af]">₱{Number(item.parts_cost).toLocaleString()}</td>
+                                                                        <td className="py-1.5 text-right text-[#9ca3af]">₱{Number(item.labor_cost).toLocaleString()}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    )}
+                                                    <div className="flex justify-between items-center pt-1">
+                                                        <span className="text-[10px] text-[#6b7280]">AI Estimated Range</span>
+                                                        <span className="text-sm font-black text-[#f97316]">
+                                                            ₱{Number(selectedRequest.ai_estimate.total_min).toLocaleString()} – ₱{Number(selectedRequest.ai_estimate.total_max).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

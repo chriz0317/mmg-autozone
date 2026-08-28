@@ -235,6 +235,7 @@ Route::middleware(['role:admin,admin'])->group(function () {
     // Admin Service Requests
     Route::get('/admin/services', [\App\Http\Controllers\ServiceRequestController::class, 'index'])->name('admin.services.index');
     Route::patch('/admin/services/{id}', [\App\Http\Controllers\ServiceRequestController::class, 'update'])->name('admin.services.update');
+    Route::post('/admin/services/{serviceRequest}/analyze', [\App\Http\Controllers\AIEstimateController::class, 'analyze'])->name('admin.services.analyze');
 
     Route::post('/admin/intakes/{intake}/assign', [\App\Http\Controllers\AdminController::class, 'assignMechanic'])->name('admin.intakes.assign');
     Route::post('/admin/intakes/{intake}/ready', [\App\Http\Controllers\AdminController::class, 'markReady'])->name('admin.intakes.ready');

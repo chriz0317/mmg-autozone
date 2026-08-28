@@ -56,7 +56,7 @@ export default function EstimateForm() {
                 
                 <div className="mb-8">
                     <h2 className="text-3xl font-black text-white mb-2">Request an Estimate</h2>
-                    <p className="text-[#9ca3af] text-sm">Upload photos of your vehicle to get a preliminary repair cost estimate.</p>
+                    <p className="text-[#9ca3af] text-sm">Upload clear photos of the damage — our <span className="text-[#f97316] font-bold">AI will instantly analyze them</span> and generate a cost estimate. No waiting required.</p>
                 </div>
 
                 {/* DISCLAIMER */}
@@ -164,11 +164,26 @@ export default function EstimateForm() {
                         <button 
                             type="submit" 
                             disabled={processing}
-                            className="w-full sm:w-auto px-8 py-3 rounded-xl text-sm font-black text-white transition-all disabled:opacity-50"
+                            className="w-full sm:w-auto px-8 py-3 rounded-xl text-sm font-black text-white transition-all disabled:opacity-70 flex items-center gap-3"
                             style={{ background: 'linear-gradient(135deg, #ea580c, #f97316)', boxShadow: '0 8px 24px rgba(249,115,22,0.3)' }}
                         >
-                            {processing ? 'Submitting...' : 'Submit Request'}
+                            {processing ? (
+                                <>
+                                    <svg className="animate-spin w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                    </svg>
+                                    🤖 AI is analyzing your photos...
+                                </>
+                            ) : (
+                                <>🤖 Submit & Get Instant AI Estimate</>
+                            )}
                         </button>
+                        {processing && (
+                            <p className="mt-3 text-xs text-[#6b7280]">
+                                Uploading photos and running damage analysis. This may take 10–20 seconds...
+                            </p>
+                        )}
                     </div>
                 </form>
             </main>

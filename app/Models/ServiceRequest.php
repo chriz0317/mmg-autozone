@@ -31,6 +31,8 @@ class ServiceRequest extends Model
         'status',
         'appointment_date',
         'preferred_date',
+        'ai_estimate',
+        'ai_analyzed_at',
     ];
 
     protected $casts = [
@@ -38,6 +40,8 @@ class ServiceRequest extends Model
         'areas' => 'array',
         'appointment_date' => 'datetime',
         'preferred_date' => 'date',
+        'ai_estimate' => 'array',
+        'ai_analyzed_at' => 'datetime',
     ];
 
     public function user()
