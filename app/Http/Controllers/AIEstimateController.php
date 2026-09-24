@@ -125,24 +125,58 @@ Instructions:
 
         $photos = $serviceRequest->photos ?? [];
         foreach (array_slice($photos, 0, 4) as $photoUrl) {
-            // Gemini can read public URLs directly via fileData
-            $parts[] = [
-                'fileData' => [
-                    'mimeType' => 'image/jpeg',
-                    'fileUri'  => $photoUrl,
-                ]
-            ];
+            try {
+                $imageContent = null;
+                
+                // If it's a local asset URL, convert to local path (prevents local dev server HTTP hangs)
+                if (str_starts_with($photoUrl, asset(''))) {
+                    $relativePath = str_replace(asset(''), '', $photoUrl);
+                    $localPath = public_path($relativePath);
+                    if (file_exists($localPath)) {
+                        $imageContent = file_get_contents($localPath);
+                    }
+                }
+                
+                // If not local or file_get_contents failed, try HTTP request
+                if (!$imageContent) {
+                    $imageResponse = Http::timeout(10)->get($photoUrl);
+                    if ($imageResponse->successful()) {
+                        $imageContent = $imageResponse->body();
+                    }
+                }
+
+                if ($imageContent) {
+                    $ext = strtolower(pathinfo(parse_url($photoUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
+                    $mimeType = match($ext) {
+                        'png' => 'image/png',
+                        'webp' => 'image/webp',
+                        'heic' => 'image/heic',
+                        'heif' => 'image/heif',
+                        default => 'image/jpeg',
+                    };
+
+                    $parts[] = [
+                        'inlineData' => [
+                            'mimeType' => $mimeType,
+                            'data'  => base64_encode($imageContent),
+                        ]
+                    ];
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Failed to load photo for AI estimate: {$photoUrl}. Error: " . $e->getMessage());
+            }
         }
 
         $response = Http::timeout(30)->post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}",
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={$apiKey}",
             [
                 'contents' => [
                     ['parts' => $parts]
                 ],
                 'generationConfig' => [
-                    'temperature'     => 0.3,
-                    'maxOutputTokens' => 1024,
+                    'temperature'      => 0.3,
+                    'maxOutputTokens'  => 4096,
+                    'responseMimeType' => 'application/json',
                 ]
             ]
         );

@@ -271,9 +271,26 @@ function PhotoEstimateForm() {
                 </div>
             )}
 
-            <button type="submit" disabled={processing} className="w-full py-3.5 rounded-xl text-sm font-black text-white transition-all disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #ea580c, #f97316)', boxShadow: '0 8px 24px rgba(249,115,22,0.25)' }}>
-                {processing ? 'Submitting...' : '📸 Submit Photo Estimate'}
-            </button>
+            <div className="pt-2">
+                <button 
+                    type="submit" 
+                    disabled={processing}
+                    className="w-full py-3.5 rounded-xl text-sm font-black text-white transition-all disabled:opacity-70 flex items-center justify-center gap-3"
+                    style={{ background: 'linear-gradient(135deg, #ea580c, #f97316)', boxShadow: '0 8px 24px rgba(249,115,22,0.25)' }}
+                >
+                    {processing ? (
+                        <>
+                            <svg className="animate-spin w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                            </svg>
+                            🤖 AI is analyzing...
+                        </>
+                    ) : (
+                        <>🤖 Submit & Get AI Estimate</>
+                    )}
+                </button>
+            </div>
         </form>
     );
 }

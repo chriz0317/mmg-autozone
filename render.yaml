@@ -1,6 +1,6 @@
 databases:
   - name: mmg-autozone-db
-    plan: free # Change to starter ($7/mo) for production
+    plan: free # Upgrade to starter ($7/mo) for persistent data
     databaseName: mmg_autozone
     user: autozone_user
 
@@ -8,8 +8,10 @@ services:
   - type: web
     name: mmg-autozone-app
     env: docker
-    plan: free # Change to starter ($7/mo) for production
+    plan: free
+    healthCheckPath: /
     envVars:
+      # ── App ──────────────────────────────────────────────────────────────
       - key: APP_NAME
         value: "MMG Autozone"
       - key: APP_ENV
@@ -19,9 +21,9 @@ services:
       - key: APP_KEY
         generateValue: true
       - key: APP_URL
-        value: https://mmg-autozone-app.onrender.com # This will be the temporary render URL
-      
-      # Database Connection
+        value: https://mmg-autozone-app.onrender.com
+
+      # ── Database (auto-linked from Render Postgres) ────────────────────
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -45,16 +47,36 @@ services:
           name: mmg-autozone-db
           property: password
 
-      # Other configs
+      # ── Cache / Session / Queue ──────────────────────────────────────────
       - key: LOG_CHANNEL
         value: stderr
-      - key: BROADCAST_DRIVER
-        value: log
-      - key: CACHE_DRIVER
+      - key: CACHE_STORE
         value: file
       - key: QUEUE_CONNECTION
         value: sync
       - key: SESSION_DRIVER
         value: file
-      - key: MAIL_MAILER
+      - key: BROADCAST_CONNECTION
         value: log
+      - key: FILESYSTEM_DISK
+        value: cloudinary
+
+      # ── Mail (Resend) ────────────────────────────────────────────────────
+      - key: MAIL_MAILER
+        value: resend
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@mmgautozone.com
+      - key: MAIL_FROM_NAME
+        value: "MMG Autozone"
+      - key: RESEND_API_KEY
+        sync: false   # Set manually in Render Dashboard > Environment
+
+      # ── Cloudinary ────────────────────────────────────────────────────────
+      - key: CLOUDINARY_URL
+        sync: false   # Set manually in Render Dashboard > Environment
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

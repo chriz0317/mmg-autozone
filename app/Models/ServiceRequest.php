@@ -33,15 +33,21 @@ class ServiceRequest extends Model
         'preferred_date',
         'ai_estimate',
         'ai_analyzed_at',
+        'damage_markers',
+        'estimate_breakdown',
+        'auto_approved',
     ];
 
     protected $casts = [
-        'photos' => 'array',
-        'areas' => 'array',
-        'appointment_date' => 'datetime',
-        'preferred_date' => 'date',
-        'ai_estimate' => 'array',
-        'ai_analyzed_at' => 'datetime',
+        'photos'             => 'array',
+        'areas'              => 'array',
+        'appointment_date'   => 'datetime',
+        'preferred_date'     => 'date',
+        'ai_estimate'        => 'array',
+        'ai_analyzed_at'     => 'datetime',
+        'damage_markers'     => 'array',
+        'estimate_breakdown' => 'array',
+        'auto_approved'      => 'boolean',
     ];
 
     public function user()

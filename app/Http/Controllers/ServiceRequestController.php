@@ -19,68 +19,107 @@ class ServiceRequestController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'service_type' => 'required|in:photo_estimate,repair,repaint',
-            'name' => 'nullable|string|max:255',
-            'contact_no' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'vehicle_model' => 'required|string|max:255',
-            'plate_no' => 'nullable|string|max:255',
+            'service_type'    => 'required|in:photo_estimate,repair,repaint',
+            'name'            => 'nullable|string|max:255',
+            'contact_no'      => 'nullable|string|max:255',
+            'email'           => 'nullable|email|max:255',
+            'vehicle_model'   => 'required|string|max:255',
+            'plate_no'        => 'nullable|string|max:255',
             'issue_description' => 'nullable|string',
-            'photos' => 'nullable|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
-            'areas' => 'nullable|array',
-            'color_preference' => 'nullable|string|max:255',
-            'additional_notes' => 'nullable|string',
-            'preferred_date' => 'nullable|date',
+            'photos'          => 'nullable|array',
+            'photos.*'        => 'image|mimes:jpeg,png,jpg,gif,webp,heic,heif,jfif|max:10240',
+            'areas'           => 'nullable|array',
+            'color_preference'=> 'nullable|string|max:255',
+            'additional_notes'=> 'nullable|string',
+            'preferred_date'  => 'nullable|date',
+            // Damage diagram fields
+            'damage_markers'  => 'nullable|array',
+            'damage_markers.*.area_id'   => 'required_with:damage_markers|string',
+            'damage_markers.*.area_label'=> 'required_with:damage_markers|string',
+            'damage_markers.*.severity'  => 'required_with:damage_markers|in:light_scratch,dent,severe',
         ]);
 
+        // ── Upload photos ────────────────────────────────────────────────────
         $photoPaths = [];
-
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('service_requests', 'cloudinary');
-                $photoPaths[] = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
+                try {
+                    $path = $photo->store('service_requests', 'cloudinary');
+                    $photoPaths[] = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
+                } catch (\Exception $e) {
+                    $path = $photo->store('service_requests', 'public');
+                    $photoPaths[] = asset('storage/' . $path);
+                }
             }
         }
 
+        // ── Rule-based price estimation ──────────────────────────────────────
+        $damageMarkers    = $request->input('damage_markers', []);
+        $estimateBreakdown = null;
+        $autoApproved     = false;
+        $initialStatus    = 'Pending';
+        $adminRemarks     = null;
+
+        if ($request->service_type === 'photo_estimate' && !empty($damageMarkers)) {
+            $estimateBreakdown = \App\Services\PriceEstimatorService::calculate($damageMarkers);
+
+            // Smart Quote Approval
+            if (\App\Services\PriceEstimatorService::shouldAutoApprove($damageMarkers, $estimateBreakdown)) {
+                $autoApproved  = true;
+                $initialStatus = 'Approved';
+                $adminRemarks  = 'Auto-approved: Minor repair. Estimate is below ₱' 
+                    . number_format(\App\Services\PriceEstimatorService::AUTO_APPROVAL_THRESHOLD, 0) 
+                    . ' with no severe damage.';
+            }
+            // else: stays Pending → flagged for mechanic review
+        }
+
+        // ── Create the service request ────────────────────────────────────────
         $serviceRequest = ServiceRequest::create([
-            'user_id' => Auth::id(), // Will be null for guests if allowed
-            'service_type' => $request->service_type,
-            'name' => $request->name,
-            'contact_no' => $request->contact_no,
-            'email' => $request->email,
-            'vehicle_model' => $request->vehicle_model,
-            'plate_no' => $request->plate_no,
-            'issue_description' => $request->issue_description ?? 'Auto Repaint / Customization',
-            'photos' => empty($photoPaths) ? null : $photoPaths,
-            'areas' => $request->areas,
-            'color_preference' => $request->color_preference,
-            'additional_notes' => $request->additional_notes,
-            'preferred_date' => $request->preferred_date,
-            'status' => 'Pending',
+            'user_id'           => Auth::id(),
+            'service_type'      => $request->service_type,
+            'name'              => $request->name,
+            'contact_no'        => $request->contact_no,
+            'email'             => $request->email,
+            'vehicle_model'     => $request->vehicle_model,
+            'plate_no'          => $request->plate_no ?? 'N/A',
+            'issue_description' => $request->issue_description ?? 'Pending inspection',
+            'photos'            => empty($photoPaths) ? null : $photoPaths,
+            'areas'             => $request->areas,
+            'color_preference'  => $request->color_preference,
+            'additional_notes'  => $request->additional_notes,
+            'preferred_date'    => $request->preferred_date,
+            'damage_markers'    => empty($damageMarkers) ? null : $damageMarkers,
+            'estimate_breakdown'=> $estimateBreakdown,
+            'estimated_cost'    => $estimateBreakdown ? $estimateBreakdown['total_min'] : null,
+            'status'            => $initialStatus,
+            'auto_approved'     => $autoApproved,
+            'admin_remarks'     => $adminRemarks,
         ]);
 
-        // If this is a photo estimate, run AI analysis immediately
-        if ($serviceRequest->service_type === 'photo_estimate' && !empty($photoPaths)) {
+        // ── Send notification if auto-approved ────────────────────────────────
+        if ($autoApproved) {
             try {
-                $aiController = new \App\Http\Controllers\AIEstimateController();
-                $aiResult = $aiController->runAnalysis($serviceRequest);
-                $serviceRequest->update([
-                    'ai_estimate'    => $aiResult,
-                    'ai_analyzed_at' => now(),
-                ]);
+                $email = $serviceRequest->user?->email ?? $serviceRequest->email;
+                if ($email) {
+                    \Illuminate\Support\Facades\Notification::route('mail', $email)
+                        ->notify(new \App\Notifications\ServiceRequestReviewed($serviceRequest));
+                }
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('AI Estimate auto-run failed: ' . $e->getMessage());
-                // Non-fatal — the request is still saved, AI just didn't run
+                \Illuminate\Support\Facades\Log::error('Auto-approval notification failed: ' . $e->getMessage());
             }
-
-            // Redirect to the results page so the customer sees the estimate instantly
-            return redirect()->route('service_requests.show', $serviceRequest->id)
-                ->with('success', 'Your photos have been analyzed! Here is your preliminary estimate.');
         }
 
-        return redirect()->back()->with('success', 'Request submitted successfully.');
+        // ── Redirect to results ───────────────────────────────────────────────
+        if ($request->service_type === 'photo_estimate') {
+            return redirect()->route('service_requests.show', $serviceRequest->id)
+                ->with('success', $autoApproved
+                    ? '✅ Your estimate has been auto-approved! Review your quote below.'
+                    : '📋 Your request has been submitted. A mechanic will review it shortly.');
+        }
 
+        return redirect()->route('customer.dashboard')
+            ->with('success', 'Request submitted successfully. We\'ll be in touch!');
     }
 
     /**
