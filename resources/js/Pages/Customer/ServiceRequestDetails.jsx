@@ -234,8 +234,7 @@ export default function ServiceRequestDetails({ serviceRequest }) {
                         )}
                         <p className="text-[#10b981] font-bold text-sm">
                             You may now bring your vehicle to MMG Autozone for a physical inspection and final quotation.
-                            </p>
-                        </div>
+                        </p>
                     </div>
                 )}
 
