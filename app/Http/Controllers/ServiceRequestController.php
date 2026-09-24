@@ -43,13 +43,8 @@ class ServiceRequestController extends Controller
         $photoPaths = [];
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                try {
-                    $path = $photo->store('service_requests', 'cloudinary');
-                    $photoPaths[] = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
-                } catch (\Exception $e) {
-                    $path = $photo->store('service_requests', 'public');
-                    $photoPaths[] = asset('storage/' . $path);
-                }
+                $path = $photo->store('service_requests', 'public');
+                $photoPaths[] = asset('storage/' . $path);
             }
         }
 

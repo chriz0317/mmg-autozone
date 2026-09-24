@@ -59,7 +59,7 @@ services:
       - key: BROADCAST_CONNECTION
         value: log
       - key: FILESYSTEM_DISK
-        value: cloudinary
+        value: public
 
       # ── Mail (Resend) ────────────────────────────────────────────────────
       - key: MAIL_MAILER
@@ -70,13 +70,3 @@ services:
         value: "MMG Autozone"
       - key: RESEND_API_KEY
         sync: false   # Set manually in Render Dashboard > Environment
-
-      # ── Cloudinary ────────────────────────────────────────────────────────
-      - key: CLOUDINARY_URL
-        sync: false   # Set manually in Render Dashboard > Environment
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
